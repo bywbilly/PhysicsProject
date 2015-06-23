@@ -2,18 +2,14 @@
 Project Introduction
 
 * Core
--- Tiancheng Xie
-
--- Yifei Pu
+** Tiancheng Xie
+** Yifei Pu
 
 * Graphics
--- Shichao Xu
-
--- Bicheng Gao
+** Shichao Xu
+** Bicheng Gao
 
 * Documents && Design
--- Zhendong Xue
-
--- Zhijian Liu
-
--- Yuhao Zhou
+** Zhendong Xue
+** Zhijian Liu
+** Yuhao Zhou
