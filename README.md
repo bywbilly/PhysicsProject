@@ -1,11 +1,14 @@
-# PhysicsProject
+Project Introduction
 
-## 目前根据意愿分组如下：
+* Core
+** Tiancheng Xie
+** Yifei Pu
 
-1. 蒲逸飞 谢天成
+* Graphics
+** Shichao Xu
+** Bicheng Gao
 
-2. 徐世超 高必成 蔡万鑫
-
-3. 薛振东 刘志健 周宇晧
-
-# 感觉要爆炸
+* Documents && Design
+** Zhendong Xue
+** Zhijian Liu
+** Yuhao Zhou
