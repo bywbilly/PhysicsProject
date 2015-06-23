@@ -1,22 +1,32 @@
-Physical Project
+物理学导论大作业
 ===============
 
-Assignment
+人员分配
 ---------------
 
-###Core
-* Tiancheng Xie
-* Yifei Pu
+###核心
+* 谢天成
+* 蒲逸飞
 
-###Graphics
-* Shichao Xu
-* Bicheng Gao
-* Wanxin Cai
+###图形化
+* 徐世超
+* 高必成
+* 蔡万鑫
 
-###Documents & Design
-* Zhendong Xue
-* Zhijian Liu
-* Yuhao Zhou
+###关卡设计 & 文档 & 展示
+* 薛震东
+* 刘志健
+* 周宇晧
   
 
+待办事项(每个小组人员来写一下待办事项, 格式如下)
+--------------------
 
+###核心
+-[]完成待办事项列表
+
+###图形化
+-[]完成待办事项列表
+
+###关卡设计 & 文档 & 展示
+-[]完成待办事项列表
