@@ -53,7 +53,7 @@ void drawSquare(b2Vec2* points,b2Vec2 center,float angle)
 
 void draw_poly(vector<b2Vec2> points,b2Vec2 center,float angle)
 {
-	fprintf(stderr, "center = (%f, %f)\n", center.x, center.y);
+//	fprintf(stderr, "center = (%f, %f)\n", center.x, center.y);
 	glColor3f(1,1,1);
 	glPushMatrix();//glPushMatrix压入当前矩阵堆栈。
 		glTranslatef(center.x*M2P,center.y*M2P,0);
@@ -94,7 +94,7 @@ void display()
 
 		tmp=tmp->GetNext();
 	}
-	fprintf(stderr, "Count = %d\n", count);
+//	fprintf(stderr, "Count = %d\n", count);
 	glColor3f(1,1,1);
 	glPushMatrix();
 	glBegin(GL_LINE_STRIP);
@@ -163,7 +163,7 @@ int main(int argc,char** argv)
                       /*清理历史画的点*/
                       if(gpoint.size() == 0) break;
                       sb.addPolygon(gpoint, true);
-                    //  gpoint.clear();
+                      gpoint.clear();
                       break;
                     }
 					break;

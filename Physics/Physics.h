@@ -71,7 +71,12 @@ public:
 		fprintf(stderr, "convexhull SUCCESS %d\n", (int)points.size());
 
 		b2BodyDef bodydef;
-		bodydef.position.Set(points[0].x, points[0].y);
+		b2Vec2 Gcenter;
+		Gcenter = b2Vec2(0, 0);
+		for(int i = 0; i < points.size(); ++i)
+			Gcenter = Gcenter + points[i];
+		Gcenter.x /= points.size(), Gcenter.y /= points.size();
+		bodydef.position.Set(Gcenter.x, Gcenter.y);
 		if(canMove)
 			bodydef.type=b2_dynamicBody;
 		bodydef.linearDamping = 0.0f;
@@ -85,7 +90,7 @@ public:
 		b2Vec2 *f = new b2Vec2[points.size()];
 		for(int i = 0; i < points.size(); ++i)
 		{
-			f[i] = points[i] - points[0];
+			f[i] = points[i] - Gcenter;
 		}
 		shape.Set(f, points.size());
 		delete f;

@@ -43,6 +43,7 @@ vector <b2Vec2> convexhull(vector <b2Vec2> a)
 	for (int i = 1; i < sz(a); i ++)
 		if (!equal_cmp(a[i], a[n]))
 			a[++ n] = a[i];
+	n ++;
 	a.resize(n);
 	for (int i = 0; i < sz(a); i ++)
 	{
@@ -58,6 +59,7 @@ vector <b2Vec2> convexhull(vector <b2Vec2> a)
 		b[++ m] = a[i];
 	}
 	m --;
+	fprintf(stderr, "m = %d\n", m);
 	for (int i = 0; i < m; i ++)
 		b[i] = b[i + 1];
 	b.resize(m);

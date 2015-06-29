@@ -1,10 +1,10 @@
 #ifndef _CONST
 #define _CONST
 
-const int WIDTH=800;
-const int HEIGHT=600;
+const int WIDTH=1280;
+const int HEIGHT=720;
 const float M2P=20;
 const float P2M=1/M2P;
-const float g = 0;
+const float g = 9.8;
 
 #endif
