@@ -1,5 +1,5 @@
-#ifndef CONVEXHULL
-#define CONVEXHULL
+#ifndef _CONVEXHULL
+#define _CONVEXHULL
 
 #include <algorithm>
 #include <vector>
