@@ -9,7 +9,7 @@ using std::vector;
 
 #define sz(X) ((int)((X).size()))
 
-int sign(double x, double eps = 1e-8)
+int sign(float x, float eps = FLT_EPSILON)
 {
 	return (x < -eps ? -1 : x > eps);
 }
@@ -25,18 +25,26 @@ double det(const b2Vec2 &a, const b2Vec2 &b)
 {
 	return a.x * b.y - a.y * b.x;
 }
-/*
-b2Vec2 operator - (const b2Vec2 &a, const b2Vec2 &b)
+
+bool equal_cmp(const b2Vec2 &a, const b2Vec2 &b)
 {
-	return b2Vec2(a.x - b.x, a.y - b.y);
+	if (!sign(a.x - b.x) && !sign(a.y - b.y))
+		return 1;
+	return 0;
 }
-*/
+
 vector <b2Vec2> convexhull(vector <b2Vec2> a)
 {
 	vector <b2Vec2> b;
 	b.resize(sz(a));
 	int m = 0;
 	sort(a.begin(), a.end(), cmp);
+	a.erase(unique(a.begin(), a.end(), equal_cmp), a.end());
+	if (sz(a) < 3)
+	{
+		b.resize(0);
+		return b;
+	}
 	for (int i = 0; i < sz(a); i ++)
 	{
 		while (m >= 2 && sign(det(b[m] - b[m - 1], a[i] - b[m])) <= 0)
