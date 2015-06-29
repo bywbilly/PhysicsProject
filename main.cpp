@@ -53,6 +53,7 @@ void drawSquare(b2Vec2* points,b2Vec2 center,float angle)
 
 void draw_poly(vector<b2Vec2> points,b2Vec2 center,float angle)
 {
+	fprintf(stderr, "center = (%f, %f)\n", center.x, center.y);
 	glColor3f(1,1,1);
 	glPushMatrix();//glPushMatrix压入当前矩阵堆栈。
 		glTranslatef(center.x*M2P,center.y*M2P,0);
@@ -60,7 +61,7 @@ void draw_poly(vector<b2Vec2> points,b2Vec2 center,float angle)
 		glRotatef(angle*180.0/M_PI,0,0,1);
 		glBegin(GL_POLYGON);
 			for(int i=0;i!=points.size();++i)
-				glVertex2f(points[i] .x*M2P,points[i] .y*M2P);//打印点
+				glVertex2f(-points[i] .x*M2P,points[i] .y*M2P);//打印点
 		glEnd();
 	glPopMatrix();
 }
@@ -72,11 +73,7 @@ void init()
 	glMatrixMode(GL_MODELVIEW);//GL_MODELVIEW,对模型视景矩阵堆栈应用随后的矩阵操作.
 	glClearColor(0,0,0,1);//通过glClear使用红，绿，蓝以及AFA值来清除颜色缓冲区的，并且都被归一化在（0，1）之间的值，其实就是清空当前的所有颜色。
 
-	world=new b2World(b2Vec2(0,0), false);
-	addRect(WIDTH/2,0,WIDTH,30,false);
-	addRect(WIDTH/2,HEIGHT-50,WIDTH,30,false);
-	addRect(10,0,10,HEIGHT * 10,false);
-	addRect(WIDTH,0,10,HEIGHT * 10,false);
+	world=new b2World(b2Vec2(0,g), false);
 }
 
 void display()
@@ -85,8 +82,10 @@ void display()
 	glLoadIdentity();//重置当前指定的矩阵为单位矩阵.将之前矩阵变换导致变化过的栈顶矩阵重新归位，置为单位矩阵！消除之前的矩阵变换带来的影响
 	b2Body* tmp=world->GetBodyList();
 	vector<b2Vec2> points;
+	int count = 0;
 	while(tmp)
 	{
+		count++;
 		int size = ((b2PolygonShape*)((tmp -> GetFixtureList()[0]).GetShape())) -> GetVertexCount();
 		points.resize(size);
 		for(int i=0;i<size;i++)
@@ -95,6 +94,7 @@ void display()
 
 		tmp=tmp->GetNext();
 	}
+	fprintf(stderr, "Count = %d\n", count);
 	glColor3f(1,1,1);
 	glPushMatrix();
 	glBegin(GL_LINE_STRIP);
@@ -130,7 +130,7 @@ int main(int argc,char** argv)
 	//for(int i = 0; i < 10; ++i){addRect(rand() % 600 + 1, rand() % 400 + 1,30,30,true);}
 
 
-	Simulator sb;
+	Simulator sb = Simulator(world);
 	while(running)
 	{
 		start=SDL_GetTicks();//获取当前时间，以毫秒计时
@@ -163,7 +163,7 @@ int main(int argc,char** argv)
                       /*清理历史画的点*/
                       if(gpoint.size() == 0) break;
                       sb.addPolygon(gpoint, true);
-                      gpoint.clear();
+                    //  gpoint.clear();
                       break;
                     }
 					break;
