@@ -21,7 +21,7 @@ bool cmp(const b2Vec2 &a, const b2Vec2 &b)
 	return sign(a.y - b.y) < 0;
 }
 
-double det(const b2Vec2 &a, const b2Vec2 &b)
+float det(const b2Vec2 &a, const b2Vec2 &b)
 {
 	return a.x * b.y - a.y * b.x;
 }
