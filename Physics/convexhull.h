@@ -39,12 +39,11 @@ vector <b2Vec2> convexhull(vector <b2Vec2> a)
 	b.resize(sz(a) + 1);
 	int m = 0;
 	sort(a.begin(), a.end(), cmp);
-	a.erase(unique(a.begin(), a.end(), equal_cmp), a.end());
-	if (sz(a) < 3)
-	{
-		b.resize(0);
-		return b;
-	}
+	int n = 0;
+	for (int i = 1; i < sz(a); i ++)
+		if (!equal_cmp(a[i], a[n]))
+			a[++ n] = a[i];
+	a.resize(n);
 	for (int i = 0; i < sz(a); i ++)
 	{
 		while (m >= 2 && sign(det(b[m] - b[m - 1], a[i] - b[m])) <= 0)
