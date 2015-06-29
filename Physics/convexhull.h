@@ -14,26 +14,26 @@ int sign(double x, double eps = 1e-8)
 	return (x < -eps ? -1 : x > eps);
 }
 
-bool cmp(const b2vec2 &a, const b2vec2 &b)
+bool cmp(const b2Vec2 &a, const b2Vec2 &b)
 {
 	if (sign(a.x - b.x))
 		return sign(a.x - b.x) < 0;
 	return sign(a.y - b.y) < 0;
 }
 
-double det(const b2vec2 &a, const b2vec2 &b)
+double det(const b2Vec2 &a, const b2Vec2 &b)
 {
 	return a.x * b.y - a.y * b.x;
 }
-
-b2vec2 operator - (const b2vec2 &a, const b2vec2 &b)
+/*
+b2Vec2 operator - (const b2Vec2 &a, const b2Vec2 &b)
 {
-	return b2vec2(a.x - b.x, a.y - b.y);
+	return b2Vec2(a.x - b.x, a.y - b.y);
 }
-
-vector <b2vec2> convexhull(vector <b2vec2> a)
+*/
+vector <b2Vec2> convexhull(vector <b2Vec2> a)
 {
-	vector <b2vec2> b;
+	vector <b2Vec2> b;
 	b.resize(sz(a));
 	int m = 0;
 	sort(a.begin(), a.end(), cmp);
