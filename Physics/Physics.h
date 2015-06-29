@@ -33,13 +33,18 @@ public:
 		for(int i = 0; i < points.size(); ++i)
 			points[i].x *= P2M;
 		points = convexhull(points);
+		fprintf(stderr, "check return\n");
 		if(points.size() < 3)
 			return;
+		fprintf(stderr, "convexhull SUCCESS %d\n", (int)points.size());
+
 		b2BodyDef bodydef;
 		bodydef.position.Set(points[0].x, points[0].y);
 		if(canMove)
 			bodydef.type=b2_dynamicBody;
 		b2Body* body=world->CreateBody(&bodydef);
+
+		fprintf(stderr, "fuck1\n");
 
 		b2PolygonShape shape;
 		b2Vec2 *f = new b2Vec2[points.size()];
@@ -47,6 +52,8 @@ public:
 			f[i] = points[i];
 		shape.Set(f, points.size());
 		delete f;
+
+		fprintf(stderr, "fuck2\n");
 
 		b2FixtureDef fixturedef;
 		fixturedef.shape=&shape;
