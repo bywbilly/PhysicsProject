@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
+#include <convexhull.h>
 
 class Simulator
 {
@@ -25,15 +26,31 @@ public:
 	}
 
 	/*return true if the polygon is valid*/
-	bool addPolygon(vector<b2Vec2> points, bool canMove)
+	void addPolygon(vector<b2Vec2> points, bool canMove)
 	{
-		
+		points = convexhull(points);
+
+		b2BodyDef bodydef;
+		bodydef.position.Set(points[0].x, points[0].y);
+		if(canMove)
+			bodydef.type=b2_dynamicBody;
+		b2Body* body=world->CreateBody(&bodydef);
+
+		b2PolygonShape shape;
+		shape.Set(0, 0);
+		for(int i = 1; i < points.size(); ++i)
+			shape.Set(points[i].x - points[0].x, points[i].y - points[0].y);
+
+		b2FixtureDef fixturedef;
+		fixturedef.shape=&shape;
+		fixturedef.density=1.0;
+		body->CreateFixture(&fixturedef);
 	}
 
 	/*The return value should be a image*/
 	void simulateNextStep()
 	{
-
+		world -> Step(1.0 / 30, 8, 8);
 	}
 };
 
