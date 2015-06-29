@@ -61,7 +61,7 @@ void draw_poly(vector<b2Vec2> points,b2Vec2 center,float angle)
 		glRotatef(angle*180.0/M_PI,0,0,1);
 		glBegin(GL_POLYGON);
 			for(int i=0;i!=points.size();++i)
-				glVertex2f(-points[i] .x*M2P,points[i] .y*M2P);//打印点
+				glVertex2f(points[i] .x*M2P,points[i] .y*M2P);//打印点
 		glEnd();
 	glPopMatrix();
 }
