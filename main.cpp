@@ -99,7 +99,7 @@ void display()
 	glPushMatrix();
 	glBegin(GL_LINE_STRIP);
 	for(int i=0;i!=gpoint.size();++i)
-            glVertex2f(points[i] .x,points[i] .y);//打印点
+            glVertex2f(gpoint[i].x,gpoint[i].y);//打印点
 	glEnd();
 	glPopMatrix();
 }

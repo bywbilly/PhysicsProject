@@ -29,12 +29,12 @@ public:
 	/*return true if the polygon is valid*/
 	void addPolygon(vector<b2Vec2> points, bool canMove)
 	{
-
         fprintf(stderr, "ADD POLYGON\n");
 		for(int i = 0; i < points.size(); ++i)
 			points[i].x *= P2M;
 		points = convexhull(points);
-
+		if(points.size() < 3)
+			return;
 		b2BodyDef bodydef;
 		bodydef.position.Set(points[0].x, points[0].y);
 		if(canMove)
