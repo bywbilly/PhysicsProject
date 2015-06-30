@@ -102,8 +102,8 @@ public:
 	{
 		addRect(WIDTH/2,0,WIDTH,10,false);
 		addRect(WIDTH/2,HEIGHT-10,WIDTH,20,false);
-		addRect(3,0,17,HEIGHT * 10,false);
-		addRect(WIDTH,0,10,HEIGHT * 10,false);
+		addRect(0,0,20,HEIGHT * 10,false);
+		addRect(WIDTH,0,20,HEIGHT * 10,false);
 		for(int i = 0; i < GameMap.size(); ++i)
 			addPolygon(GameMap[i].first, GameMap[i].second);
 	}
@@ -128,10 +128,17 @@ public:
 		world = NULL;
 	}
 
+	void set_goal(int dx, int dy)
+	{
+		/*TODO goal*/
+	}
+
 	/*The return value should be a image*/
-	void simulateNextStep()
+	bool simulateNextStep()
 	{
 		world -> Step(1.0 / 60, 8, 8);
+		/*TODO add goal*/
+		return false;
 	}
 };
 
