@@ -15,7 +15,9 @@ class Simulator
 {
 private:
 public:
+	int goalx, goaly, radius;
 	b2World *world;
+	int userdata[1024], cnt;
 	b2Body* addRect(int x,int y,int w,int h,bool dyn=true, double friction = 0.5)
 	{
 		b2BodyDef bodydef;
@@ -36,11 +38,13 @@ public:
 		fixturedef.restitution = 0.5;
 		fixturedef.friction = friction;
 		body->CreateFixture(&fixturedef);
+		body->SetUserData(&userdata[cnt]);
+		userdata[cnt++] = 1;
 		return NULL;
 	}
 
 	/*return true if the polygon is valid*/
-	void addPolygon(vector<b2Vec2> points, bool canMove, double density = 1, double friction = 0.00)
+	void addPolygon(vector<b2Vec2> points, bool canMove, double density = 1, double friction = 0.00, int usrdata = 1)
 	{
 		fprintf(stderr, "ADD POLYGON\n");
 		for (int i = 0; i < points.size(); ++i)
@@ -94,7 +98,8 @@ public:
 		fixturedef.restitution = 0.5;
 		fixturedef.friction = friction;
 		body->CreateFixture(&fixturedef);
-
+		body->SetUserData(&userdata[cnt]);
+		userdata[cnt++] = usrdata;
         fprintf(stderr, "ADD POLYGON SUCCESS\n");
 	}
 
@@ -116,8 +121,10 @@ public:
 		world = NULL;
 	}
 
-	void create(vector<pair<vector<b2Vec2>, bool> > GameMap, vector<pair<b2Vec2, double> > field)
+	void create(vector<pair<vector<b2Vec2>, bool> > GameMap, vector<pair<b2Vec2, double> > field, int r)
 	{
+		radius = r;
+		cnt = 0;
 		world = new b2World(b2Vec2(0, g), false);
 		init(GameMap, field);
 	}
@@ -131,6 +138,8 @@ public:
 	void set_goal(int dx, int dy)
 	{
 		/*TODO goal*/
+		goalx = dx * P2M;
+		goaly = dy * P2M;
 	}
 
 	/*The return value should be a image*/
@@ -138,6 +147,23 @@ public:
 	{
 		world -> Step(1.0 / 60, 8, 8);
 		/*TODO add goal*/
+		b2Body* tmp=world->GetBodyList();
+		vector<b2Vec2> points;
+		int count = 0;
+		while(tmp)
+		{
+			b2Vec2 pos = tmp -> GetWorldCenter();
+			if(*((int*)tmp -> GetUserData()) == -1)
+			{
+				if((pos.x - goalx) * (pos.x - goalx) + (pos.y - goaly) * (pos.y - goaly) <= radius * radius)
+				{
+					fprintf(stderr, "WIN\n");
+					return true;
+				}
+				break;
+			}
+			tmp=tmp->GetNext();
+		}
 		return false;
 	}
 };
