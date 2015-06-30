@@ -262,6 +262,7 @@ void level_1()
 		goods.push_back( b2Vec2(WIDTH-20,HEIGHT-90) );
 		goods.push_back( b2Vec2(WIDTH*2/3,HEIGHT-90) );
 		GameMap.push_back( make_pair(goods , false) );
+		field.push_back(make_pair(b2Vec2(centerx, centery), 10));
 		goods.clear();
 		sb.create(GameMap , field, 0.5);
 	}
@@ -269,9 +270,6 @@ void level_1()
 
 	for(int i = 0; i < 360; ++i) {gpoint.push_back(b2Vec2(centerx + cos((double)i*M_PI/180) * 30, centery + sin((double)i*M_PI/180)*30));}
 	sb.addPolygon(gpoint, true, 0, 0, -1); gpoint.clear();
-	
-	
-	
 	
 	while(running)
 	{

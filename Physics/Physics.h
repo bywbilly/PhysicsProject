@@ -19,6 +19,7 @@ public:
 	double radius;
 	b2World *world;
 	int userdata[1024], cnt;
+	vector<pair<b2Vec2, double> > field;
 	b2Body* addRect(int x,int y,int w,int h,bool dyn=true, double friction = 0.5)
 	{
 		b2BodyDef bodydef;
@@ -104,7 +105,7 @@ public:
         fprintf(stderr, "ADD POLYGON SUCCESS\n");
 	}
 
-	void init(const vector<pair<vector<b2Vec2>, bool> > &GameMap, const vector<pair<b2Vec2, double> > &field)
+	void init(const vector<pair<vector<b2Vec2>, bool> > &GameMap, const vector<pair<b2Vec2, double> > &Field)
 	{
 		addRect(WIDTH/2,0,WIDTH,10,false);
 		addRect(WIDTH/2,HEIGHT-10,WIDTH,20,false);
@@ -112,6 +113,18 @@ public:
 		addRect(WIDTH,0,20,HEIGHT * 10,false);
 		for(int i = 0; i < GameMap.size(); ++i)
 			addPolygon(GameMap[i].first, GameMap[i].second);
+		field = Field;
+		for(int i = 0; i < field.size(); ++i)
+		{
+			vector<b2Vec2> point;
+			for(int j = 0; j < 360; ++j)
+			{
+				point.push_back(field[i].first + b2Vec2(2 * cos((double)j * M_PI / 180), 2 * sin((double)j * M_PI / 180)));
+			}
+			fprintf(stderr, "add field poly\n");
+			addPolygon(point, false);
+			field[i].first.x *= P2M, field[i].first.y *= P2M;
+		}
 	}
 	Simulator()
 	{
@@ -154,6 +167,8 @@ public:
 		while(tmp)
 		{
 			b2Vec2 pos = tmp -> GetWorldCenter();
+			b2Vec2 force;
+			force = b2Vec2(0, 0);
 			if(*((int*)tmp -> GetUserData()) == -1)
 			{
 				if((pos.x - goalx) * (pos.x - goalx) + (pos.y - goaly) * (pos.y - goaly) <= radius * radius)
@@ -161,8 +176,17 @@ public:
 					fprintf(stderr, "WIN\n");
 					return true;
 				}
-				break;
 			}
+			for(int i = 0; i < field.size(); ++i)
+			{
+				double r_square = (pos.x - field[i].first.x) * (pos.x - field[i].first.x) + (pos.y - field[i].first.y) * (pos.y - field[i].first.y);
+				b2Vec2 direction = field[i].first - pos;
+				double len = sqrt(direction.x * direction.x + direction.y * direction.y);
+				direction.x /= len, direction.y /= len;
+				direction.x *= field[i].second, direction.y *= field[i].second;
+				force = force + direction;
+			}
+			tmp -> ApplyForce(force, pos);
 			tmp=tmp->GetNext();
 		}
 		return false;
