@@ -175,8 +175,8 @@ int main(int argc,char** argv)
 		display();
 		sb.simulateNextStep();
 		SDL_GL_SwapBuffers();//这个是SDL的函数,前面开启了交换缓冲区,这里调用,交换前后缓冲区,图像就显示出来了。
-		if(1000.0/30>SDL_GetTicks()-start)
-			SDL_Delay(1000.0/30-(SDL_GetTicks()-start));
+		if(1000.0/60>SDL_GetTicks()-start)
+			SDL_Delay(1000.0/60-(SDL_GetTicks()-start));
 	}
 	SDL_Quit();//main中的每个return前都要这个玩意儿
 	return 0;

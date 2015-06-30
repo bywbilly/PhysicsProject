@@ -20,8 +20,8 @@ public:
 		bodydef.position.Set(x*P2M,y*P2M);
 		if(dyn)
 			bodydef.type=b2_dynamicBody;
-		bodydef.linearDamping = 0.0f;
-		bodydef.angularDamping = 0.0f;
+		bodydef.linearDamping = 0.0001f;
+		bodydef.angularDamping = 0.0001f;
 
 		b2Body* body=world->CreateBody(&bodydef);
 
@@ -31,8 +31,8 @@ public:
 		b2FixtureDef fixturedef;
 		fixturedef.shape=&shape;
 		fixturedef.density=1.0;
-		fixturedef.restitution = 1.0;
-		fixturedef.friction = 0;
+		fixturedef.restitution = 0.5;
+		fixturedef.friction = 0.5;
 		body->CreateFixture(&fixturedef);
 		return NULL;
 	}
@@ -79,8 +79,8 @@ public:
 		bodydef.position.Set(Gcenter.x, Gcenter.y);
 		if(canMove)
 			bodydef.type=b2_dynamicBody;
-		bodydef.linearDamping = 0.0f;
-		bodydef.angularDamping = 0.0f;
+		bodydef.linearDamping = 1.0;
+		bodydef.angularDamping = 1.0;
 
 		b2Body* body=world->CreateBody(&bodydef);
 
@@ -92,7 +92,9 @@ public:
 		{
 			f[i] = points[i] - Gcenter;
 		}
+		fprintf(stderr, "start Set\n");
 		shape.Set(f, points.size());
+		fprintf(stderr, "end Set\n");
 		delete f;
 
 		fprintf(stderr, "fuck2\n");
@@ -100,8 +102,8 @@ public:
 		b2FixtureDef fixturedef;
 		fixturedef.shape=&shape;
 		fixturedef.density=1.0;
-		fixturedef.restitution = 1.0;
-		fixturedef.friction = 0;
+		fixturedef.restitution = 0.5;
+		fixturedef.friction = 0.5;
 		body->CreateFixture(&fixturedef);
 
         fprintf(stderr, "ADD POLYGON SUCCESS\n");
@@ -110,7 +112,7 @@ public:
 	/*The return value should be a image*/
 	void simulateNextStep()
 	{
-		world -> Step(1.0 / 30, 8, 3);
+		world -> Step(1.0 / 60, 8, 8);
 	}
 };
 

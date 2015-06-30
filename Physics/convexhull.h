@@ -62,6 +62,7 @@ vector <b2Vec2> convexhull(vector <b2Vec2> a)
 	fprintf(stderr, "m = %d\n", m);
 	for (int i = 0; i < m; i ++)
 		b[i] = b[i + 1];
+	fprintf(stderr, "nico\n");
 	b.resize(m);
 	return b;
 }
