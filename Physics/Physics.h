@@ -9,19 +9,21 @@
 #include "Const.h"
 #include <algorithm>
 
+using namespace std;
+
 class Simulator
 {
 private:
 public:
 	b2World *world;
-	b2Body* addRect(int x,int y,int w,int h,bool dyn=true)
+	b2Body* addRect(int x,int y,int w,int h,bool dyn=true, double friction = 0.5)
 	{
 		b2BodyDef bodydef;
 		bodydef.position.Set(x*P2M,y*P2M);
 		if(dyn)
 			bodydef.type=b2_dynamicBody;
-		bodydef.linearDamping = 0.0001f;
-		bodydef.angularDamping = 0.0001f;
+		bodydef.linearDamping = 0.000f;
+		bodydef.angularDamping = 0.000f;
 
 		b2Body* body=world->CreateBody(&bodydef);
 
@@ -32,34 +34,13 @@ public:
 		fixturedef.shape=&shape;
 		fixturedef.density=1.0;
 		fixturedef.restitution = 0.5;
-		fixturedef.friction = 0.5;
+		fixturedef.friction = friction;
 		body->CreateFixture(&fixturedef);
 		return NULL;
 	}
-	void init()
-	{
-		addRect(WIDTH/2,0,WIDTH,30,false);
-		addRect(WIDTH/2,HEIGHT-50,WIDTH,30,false);
-		addRect(10,0,10,HEIGHT * 10,false);
-		addRect(WIDTH,0,10,HEIGHT * 10,false);
-	}
-	Simulator()
-	{
-		world = new b2World(b2Vec2(0,g), true);
-		init();
-	}
-	Simulator(b2World *w)
-	{
-		world = w;
-		init();
-	}
-	~Simulator()
-	{
-		delete world;
-	}
 
 	/*return true if the polygon is valid*/
-	void addPolygon(vector<b2Vec2> points, bool canMove)
+	void addPolygon(vector<b2Vec2> points, bool canMove, double density = 1, double friction = 0.00)
 	{
 		fprintf(stderr, "ADD POLYGON\n");
 		for (int i = 0; i < points.size(); ++i)
@@ -87,8 +68,8 @@ public:
 		bodydef.position.Set(Gcenter.x, Gcenter.y);
 		if(canMove)
 			bodydef.type=b2_dynamicBody;
-		bodydef.linearDamping = 1.0;
-		bodydef.angularDamping = 1.0;
+		bodydef.linearDamping = 0;
+		bodydef.angularDamping = 0;
 
 		b2Body* body=world->CreateBody(&bodydef);
 
@@ -109,12 +90,42 @@ public:
 
 		b2FixtureDef fixturedef;
 		fixturedef.shape=&shape;
-		fixturedef.density=1.0;
+		fixturedef.density=density;
 		fixturedef.restitution = 0.5;
-		fixturedef.friction = 0.5;
+		fixturedef.friction = friction;
 		body->CreateFixture(&fixturedef);
 
         fprintf(stderr, "ADD POLYGON SUCCESS\n");
+	}
+
+	void init(const vector<pair<vector<b2Vec2>, bool> > &GameMap, const vector<pair<b2Vec2, double> > &field)
+	{
+		addRect(WIDTH/2,0,WIDTH,10,false);
+		addRect(WIDTH/2,HEIGHT-10,WIDTH,20,false);
+		addRect(3,0,17,HEIGHT * 10,false);
+		addRect(WIDTH,0,10,HEIGHT * 10,false);
+		for(int i = 0; i < GameMap.size(); ++i)
+			addPolygon(GameMap[i].first, GameMap[i].second);
+	}
+	Simulator()
+	{
+	}
+	~Simulator()
+	{
+		delete world;
+		world = NULL;
+	}
+
+	void create(vector<pair<vector<b2Vec2>, bool> > GameMap, vector<pair<b2Vec2, double> > field)
+	{
+		world = new b2World(b2Vec2(0, g), false);
+		init(GameMap, field);
+	}
+
+	void destroy()
+	{
+		delete world;
+		world = NULL;
 	}
 
 	/*The return value should be a image*/

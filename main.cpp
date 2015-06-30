@@ -15,8 +15,8 @@
 
 using namespace std;
 
-b2World* world;
 vector<b2Vec2> gpoint;
+Simulator sb;
 
 b2Body* addRect(int x,int y,int w,int h,bool dyn=true)
 {
@@ -27,7 +27,7 @@ b2Body* addRect(int x,int y,int w,int h,bool dyn=true)
 	bodydef.linearDamping = 0.0f;
 	bodydef.angularDamping = 0.0f;
 
-	b2Body* body=world->CreateBody(&bodydef);
+	b2Body* body=sb.world->CreateBody(&bodydef);
 
 	b2PolygonShape shape;
 	shape.SetAsBox(P2M*w/2,P2M*h/2);
@@ -76,15 +76,14 @@ void init()
 	glOrtho(0,WIDTH,HEIGHT,0,-1,1);
 	glMatrixMode(GL_MODELVIEW);
 	glClearColor(0,0,0,1);
-
-	world=new b2World(b2Vec2(0,g), false);
+	sb.create(vector<pair<vector<b2Vec2>, bool> >(), vector<pair<b2Vec2, double> >());
 }
 
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
-	b2Body* tmp=world->GetBodyList();
+	b2Body* tmp=sb.world->GetBodyList();
 	vector<b2Vec2> points;
 	int count = 0;
 	while(tmp)
@@ -110,7 +109,7 @@ void display()
 
 void moveRect(double x, double y)
 {
-	b2Body* tmp = world -> GetBodyList();
+	b2Body* tmp = sb.world -> GetBodyList();
 	b2Vec2 points[4];
 	while(tmp)
 	{
@@ -133,8 +132,12 @@ int main(int argc,char** argv)
 	srand(2);
 	//for(int i = 0; i < 10; ++i){addRect(rand() % 600 + 1, rand() % 400 + 1,30,30,true);}
 
+	for(int i = 0; i < 360; ++i)
+	{
+		gpoint.push_back(b2Vec2(200 + cos((double)i * M_PI / 180) * 20, 20 + sin((double)i * M_PI / 180)  * 20));
+	}
+	sb.addPolygon(gpoint, true, 0, 0); gpoint.clear();
 
-	Simulator sb = Simulator(world);
 	while(running)
 	{
 		start=SDL_GetTicks();
