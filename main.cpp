@@ -1,7 +1,11 @@
 #include <iostream>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
 #include <GL/glut.h>
+#endif
 #include <Box2D/Box2D.h>
 #include <cstdlib>
 #include <algorithm>
