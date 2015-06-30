@@ -15,7 +15,8 @@ class Simulator
 {
 private:
 public:
-	int goalx, goaly, radius;
+	double goalx, goaly;
+	double radius;
 	b2World *world;
 	int userdata[1024], cnt;
 	b2Body* addRect(int x,int y,int w,int h,bool dyn=true, double friction = 0.5)
@@ -121,7 +122,7 @@ public:
 		world = NULL;
 	}
 
-	void create(vector<pair<vector<b2Vec2>, bool> > GameMap, vector<pair<b2Vec2, double> > field, int r)
+	void create(vector<pair<vector<b2Vec2>, bool> > GameMap, vector<pair<b2Vec2, double> > field, double r)
 	{
 		radius = r;
 		cnt = 0;
@@ -135,7 +136,7 @@ public:
 		world = NULL;
 	}
 
-	void set_goal(int dx, int dy)
+	void set_goal(double dx, double dy)
 	{
 		/*TODO goal*/
 		goalx = dx * P2M;

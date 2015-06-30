@@ -263,7 +263,7 @@ void level_1()
 		goods.push_back( b2Vec2(WIDTH*2/3,HEIGHT-90) );
 		GameMap.push_back( make_pair(goods , false) );
 		goods.clear();
-		sb.create(GameMap , field, 1);
+		sb.create(GameMap , field, 0.5);
 	}
 	sb.set_goal(dx,dy);
 
