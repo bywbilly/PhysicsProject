@@ -83,6 +83,14 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
+	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_POINT_SMOOTH);
+	glEnable(GL_POLYGON_SMOOTH);
+	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	b2Body* tmp=sb.world->GetBodyList();
 	vector<b2Vec2> points;
 	int count = 0;
