@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
-#include <GLUT/glut.h>
+#include <GL/glut.h>
 #include <Box2D/Box2D.h>
 #include <cstdlib>
 #include <algorithm>
@@ -40,13 +40,13 @@ b2Body* addRect(int x,int y,int w,int h,bool dyn=true)
 void drawSquare(b2Vec2* points,b2Vec2 center,float angle)
 {
 	glColor3f(1,1,1);
-	glPushMatrix();//glPushMatrix压入当前矩阵堆栈。
+	glPushMatrix();
 		glTranslatef(center.x*M2P,center.y*M2P,0);
 
 		glRotatef(angle*180.0/M_PI,0,0,1);
 		glBegin(GL_QUADS);
 			for(int i=0;i<4;i++)
-				glVertex2f(points[i] .x*M2P,points[i] .y*M2P);//打印点
+				glVertex2f(points[i] .x*M2P,points[i] .y*M2P);
 		glEnd();
 	glPopMatrix();
 }
@@ -55,23 +55,23 @@ void draw_poly(vector<b2Vec2> points,b2Vec2 center,float angle)
 {
 //	fprintf(stderr, "center = (%f, %f)\n", center.x, center.y);
 	glColor3f(1,1,1);
-	glPushMatrix();//glPushMatrix压入当前矩阵堆栈。
+	glPushMatrix();
 		glTranslatef(center.x*M2P,center.y*M2P,0);
 
 		glRotatef(angle*180.0/M_PI,0,0,1);
 		glBegin(GL_POLYGON);
 			for(int i=0;i!=points.size();++i)
-				glVertex2f(points[i] .x*M2P,points[i] .y*M2P);//打印点
+				glVertex2f(points[i] .x*M2P,points[i] .y*M2P);
 		glEnd();
 	glPopMatrix();
 }
 
 void init()
 {
-	glMatrixMode(GL_PROJECTION);//mode 指定哪一个矩阵堆栈是下一个矩阵操作的目标 ; GL_PROJECTION,对投影矩阵应用随后的矩阵操作.
+	glMatrixMode(GL_PROJECTION);
 	glOrtho(0,WIDTH,HEIGHT,0,-1,1);
-	glMatrixMode(GL_MODELVIEW);//GL_MODELVIEW,对模型视景矩阵堆栈应用随后的矩阵操作.
-	glClearColor(0,0,0,1);//通过glClear使用红，绿，蓝以及AFA值来清除颜色缓冲区的，并且都被归一化在（0，1）之间的值，其实就是清空当前的所有颜色。
+	glMatrixMode(GL_MODELVIEW);
+	glClearColor(0,0,0,1);
 
 	world=new b2World(b2Vec2(0,g), false);
 }
@@ -79,7 +79,7 @@ void init()
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
-	glLoadIdentity();//重置当前指定的矩阵为单位矩阵.将之前矩阵变换导致变化过的栈顶矩阵重新归位，置为单位矩阵！消除之前的矩阵变换带来的影响
+	glLoadIdentity();
 	b2Body* tmp=world->GetBodyList();
 	vector<b2Vec2> points;
 	int count = 0;
@@ -99,7 +99,7 @@ void display()
 	glPushMatrix();
 	glBegin(GL_LINE_STRIP);
 	for(int i=0;i!=gpoint.size();++i)
-            glVertex2f(gpoint[i].x,gpoint[i].y);//打印点
+            glVertex2f(gpoint[i].x,gpoint[i].y);
 	glEnd();
 	glPopMatrix();
 }
@@ -133,8 +133,8 @@ int main(int argc,char** argv)
 	Simulator sb = Simulator(world);
 	while(running)
 	{
-		start=SDL_GetTicks();//获取当前时间，以毫秒计时
-		while(SDL_PollEvent(&event))//从事件队列里取出事件
+		start=SDL_GetTicks();
+		while(SDL_PollEvent(&event))
 		{
 			switch(event.type)
 			{
@@ -153,14 +153,12 @@ int main(int argc,char** argv)
                     {
                 	  case SDL_BUTTON_LEFT:
                 	  fprintf(stderr, "LEFT DOWN\n");
-                      x = event.button.x;//得到当前鼠标的坐标
+                      x = event.button.x;
                       y = event.button.y;
                       gpoint.push_back(b2Vec2(x, y));
-                      /*点的过程中画线*/
                       break;
                       case SDL_BUTTON_RIGHT:
                 	  fprintf(stderr, "RIGHT DOWN\n");
-                      /*清理历史画的点*/
                       if(gpoint.size() == 0) break;
                       sb.addPolygon(gpoint, true);
                       gpoint.clear();
@@ -174,10 +172,10 @@ int main(int argc,char** argv)
 
 		display();
 		sb.simulateNextStep();
-		SDL_GL_SwapBuffers();//这个是SDL的函数,前面开启了交换缓冲区,这里调用,交换前后缓冲区,图像就显示出来了。
+		SDL_GL_SwapBuffers();
 		if(1000.0/60>SDL_GetTicks()-start)
 			SDL_Delay(1000.0/60-(SDL_GetTicks()-start));
 	}
-	SDL_Quit();//main中的每个return前都要这个玩意儿
+	SDL_Quit();
 	return 0;
 }

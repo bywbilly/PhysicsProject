@@ -36,7 +36,7 @@ bool equal_cmp(const b2Vec2 &a, const b2Vec2 &b)
 vector <b2Vec2> convexhull(vector <b2Vec2> a)
 {
 	vector <b2Vec2> b;
-	b.resize(sz(a) + 1);
+	b.resize(sz(a) * 2 + 10);
 	int m = 0;
 	sort(a.begin(), a.end(), cmp);
 	int n = 0;
