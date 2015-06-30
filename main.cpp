@@ -58,7 +58,8 @@ void drawSquare(b2Vec2* points,b2Vec2 center,float angle)
 void draw_poly(vector<b2Vec2> points,b2Vec2 center,float angle)
 {
 //	fprintf(stderr, "center = (%f, %f)\n", center.x, center.y);
-	glColor3f(1,1,1);
+	srand(points.size());
+	glColor3f((double)(rand() % 100000) / 100000,(double)(rand() % 100000) / 100000,(double)(rand() % 100000) / 100000);
 	glPushMatrix();
 		glTranslatef(center.x*M2P,center.y*M2P,0);
 
