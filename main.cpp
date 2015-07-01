@@ -279,6 +279,7 @@ bool level(int levelid)
 
 	int dx,dy;//目的地
 	if(levelid >= MAXLEVEL) return true;
+	gpoint.clear();
 	init_func[levelid](dx, dy);
 	
 	while(running)
