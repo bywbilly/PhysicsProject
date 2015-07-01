@@ -504,7 +504,7 @@ void init_level4(int &dx, int &dy)
 	
 	for(int i = 0; i < 500; ++i)
 	{
-		field.push_back(make_pair(make_pair(b2Vec2(rand() % WIDTH, rand() % HEIGHT), 0)
+		field.push_back(make_pair(make_pair(b2Vec2(rand() % (WIDTH / 8), rand() % HEIGHT), 0)
 		, make_pair(2, true)));
 	}
 	g = 0;
@@ -555,7 +555,7 @@ void init_level5(int &dx, int &dy)
 		fac2 = (rand() % 2) ? 1 : -1;
 		if(v >= 10000)
 		{
-			tmp -> ApplyForce(b2Vec2(rand() % 100 * fac1, rand() % 100 * fac2), tmp -> GetWorldCenter());
+			tmp -> ApplyForce(b2Vec2((rand() * 2) % 200 * fac1, (rand() * 2) % 200 * fac2), tmp -> GetWorldCenter());
 		}
 		tmp = tmp -> GetNext();
 	}
