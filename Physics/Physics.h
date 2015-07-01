@@ -206,6 +206,7 @@ public:
 			for(int i = 0; i < field.size(); ++i)
 			{
 				double r_square = (pos.x - field[i].first.x) * (pos.x - field[i].first.x) + (pos.y - field[i].first.y) * (pos.y - field[i].first.y);
+				r_square *= sqrt(r_square);
 				b2Vec2 direction = field[i].first - pos;
 				double len = sqrt(direction.x * direction.x + direction.y * direction.y);
 				direction.x /= len * r_square, direction.y /= len * r_square;
