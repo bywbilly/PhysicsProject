@@ -87,8 +87,6 @@ public:
 
 		b2Body* body=world->CreateBody(&bodydef);
 
-		fprintf(stderr, "fuck1\n");
-
 		b2PolygonShape shape;
 		b2Vec2 *f = new b2Vec2[points.size()];
 		for(int i = 0; i < points.size(); ++i)
@@ -99,8 +97,6 @@ public:
 		shape.Set(f, points.size());
 		fprintf(stderr, "end Set\n");
 		delete f;
-
-		fprintf(stderr, "fuck2\n");
 
 		b2FixtureDef fixturedef;
 		fixturedef.shape=&shape;
