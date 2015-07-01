@@ -153,6 +153,8 @@ public:
 		world = new b2World(b2Vec2(0, g), false);
 		init(GameMap, field);
 		deathPoint = dPoint;
+		for(int i = 0; i < deathPoint.size(); ++i)
+			deathPoint[i].x *= P2M, deathPoint[i].y *= P2M;
 	}
 
 	void destroy()
