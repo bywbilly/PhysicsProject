@@ -24,6 +24,7 @@ public:
 	int userdata[MAX_BODY_LIMIT], cnt;
 	vector<pair<pair<b2Vec2, double>, pair<double, bool> > > field;
 	vector<b2Vec2> deathPoint;
+	double Restore;
 	bool isCreated;
 	b2Body* addRect(int x,int y,int w,int h,bool dyn=true, double friction = 0.5)
 	{
@@ -43,7 +44,7 @@ public:
 		b2FixtureDef fixturedef;
 		fixturedef.shape=&shape;
 		fixturedef.density=1.0;
-		fixturedef.restitution = 0.5;
+		fixturedef.restitution = Restore;
 		fixturedef.friction = friction;
 		body->CreateFixture(&fixturedef);
 		body->SetUserData(&userdata[cnt]);
@@ -104,7 +105,7 @@ public:
 		b2FixtureDef fixturedef;
 		fixturedef.shape=&shape;
 		fixturedef.density=density;
-		fixturedef.restitution = 0.5;
+		fixturedef.restitution = Restore;
 		fixturedef.friction = friction;
 		body->CreateFixture(&fixturedef);
 		body->SetUserData(&userdata[cnt]);
@@ -112,13 +113,17 @@ public:
         fprintf(stderr, "ADD POLYGON SUCCESS\n");
 	}
 
-	void init(const vector<pair<vector<b2Vec2>, bool> > &GameMap, const vector<pair<pair<b2Vec2, double>, pair<double, bool> > > &Field)
+	void init(const vector<pair<vector<b2Vec2>, bool> > &GameMap, const vector<pair<pair<b2Vec2, double>, pair<double, bool> > > &Field
+		, bool needFence)
 	{
 		assert(isCreated);
-		addRect(WIDTH/2,0,WIDTH,10,false);
-		addRect(WIDTH/2,HEIGHT-10,WIDTH,20,false);
-		addRect(0,0,20,HEIGHT * 10,false);
-		addRect(WIDTH,0,20,HEIGHT * 10,false);
+		if(needFence)
+		{
+			addRect(WIDTH/2,0,WIDTH,10,false);
+			addRect(WIDTH/2,HEIGHT-10,WIDTH,20,false);
+			addRect(0,0,20,HEIGHT * 10,false);
+			addRect(WIDTH,0,20,HEIGHT * 10,false);
+		}
 		for(int i = 0; i < GameMap.size(); ++i)
 			addPolygon(GameMap[i].first, GameMap[i].second);
 		field = Field;
@@ -145,13 +150,18 @@ public:
 		world = NULL;
 	}
 
-	void create(vector<pair<vector<b2Vec2>, bool> > GameMap, vector<pair<pair<b2Vec2, double>, pair<double, bool> > > field, vector<b2Vec2> dPoint, double r)
+	void create(vector<pair<vector<b2Vec2>, bool> > GameMap, vector<pair<pair<b2Vec2, double>, pair<double, bool> > > field, vector<b2Vec2> dPoint, double r
+			, bool isFullyRestore, bool needFence = true)
 	{
+		if(isFullyRestore)
+			Restore = 1;
+		else
+			Restore = 0.5;
 		isCreated = true;
 		radius = r;
 		cnt = 0;
 		world = new b2World(b2Vec2(0, g), false);
-		init(GameMap, field);
+		init(GameMap, field, needFence);
 		deathPoint = dPoint;
 		for(int i = 0; i < deathPoint.size(); ++i)
 			deathPoint[i].x *= P2M, deathPoint[i].y *= P2M;

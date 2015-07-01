@@ -17,7 +17,7 @@ using namespace std;
 
 vector<b2Vec2> gpoint;
 Simulator sb;
-const int MAXLEVEL = 3;
+const int MAXLEVEL = 7;
 void (*init_func[MAXLEVEL])(int&, int&);
 unsigned now_time;
 class colorVector
@@ -198,6 +198,7 @@ void moveRect(double x, double y)
 
 void init_level0(int &dx, int &dy)
 {
+	g = 9.8;
 	int centerx,centery;//开始点坐标
 	
 	centerx = WIDTH/7; centery = 20;
@@ -214,7 +215,7 @@ void init_level0(int &dx, int &dy)
 		goods.push_back( b2Vec2(WIDTH*2/3,HEIGHT-90) );
 		GameMap.push_back( make_pair(goods , false) );
 		goods.clear();
-		sb.create(GameMap , field, death_point , 0.5 );
+		sb.create(GameMap , field, death_point , 0.5, false);
 	}
 	sb.set_goal(dx,dy);
 
@@ -224,6 +225,7 @@ void init_level0(int &dx, int &dy)
 
 void init_level1(int &dx, int &dy)
 {
+	g = 9.8;
 	int centerx,centery;//开始点坐标
 	vector< b2Vec2 > death_point;
 	death_point.push_back(b2Vec2(1100,-90+HEIGHT/3));
@@ -330,7 +332,7 @@ void init_level1(int &dx, int &dy)
 		field.push_back(make_pair(make_pair(b2Vec2(900,-200 + 5*HEIGHT/6 ) , 3000.0), make_pair(3, false)));
 		field.push_back(make_pair(make_pair(b2Vec2(900,+70 + 5*HEIGHT/6 ) , -3000.0), make_pair(3, false)));
 		
-		sb.create(GameMap , field, death_point , 1.5);
+		sb.create(GameMap , field, death_point , 1.5, false);
 	}
 	sb.set_goal(dx,dy);
 
@@ -340,6 +342,7 @@ void init_level1(int &dx, int &dy)
 
 void init_level2(int &dx, int &dy)
 {
+	g = 9.8;
 	int centerx, centery;
 	centerx = WIDTH/7; centery = 20;
 	dx=1000; dy=270; 
@@ -439,7 +442,7 @@ void init_level2(int &dx, int &dy)
 		
 		//goods.clear();
 
-		sb.create(GameMap , field, death_point, 0.5);
+		sb.create(GameMap , field, death_point, 0.5, false);
 
 	}
 	
@@ -449,7 +452,165 @@ void init_level2(int &dx, int &dy)
 	sb.addPolygon(gpoint, true, 0, 0, -1); gpoint.clear();
 }
 
-bool level(int levelid)
+
+void init_level3(int &dx, int &dy)
+{
+	int centerx,centery;//开始点坐标
+	
+	centerx = 0; centery = 0;
+	dx=WIDTH+1000; dy=HEIGHT+1000;
+	vector< b2Vec2 > death_point;
+	vector<pair<vector<b2Vec2>, bool> > GameMap;
+	vector<b2Vec2> goods;
+	vector<pair<pair<b2Vec2, double>, pair<double, bool> > > field;
+	srand(time(0));
+	
+	for(int i = 0; i < 500; ++i)
+	{
+		field.push_back(make_pair(make_pair(b2Vec2(rand() % WIDTH, rand() % HEIGHT), 0.1)
+		, make_pair(2, true)));
+	}
+	g = 0;
+	sb.create(GameMap , field, death_point , 0.5, true);
+	sb.set_goal(dx,dy);
+
+	b2Body* tmp = sb.world->GetBodyList();
+	while(tmp)
+	{
+		int v = *((int*)tmp -> GetUserData());
+		int fac1, fac2;
+		fac1 = (rand() % 2) ? 1 : -1;
+		fac2 = (rand() % 2) ? 1 : -1;
+		if(v >= 10000)
+		{
+			tmp -> ApplyForce(b2Vec2(rand() % 100 * fac1, rand() % 100 * fac2), tmp -> GetWorldCenter());
+		}
+		tmp = tmp -> GetNext();
+	}
+}
+
+void init_level4(int &dx, int &dy)
+{
+	int centerx,centery;//开始点坐标
+	
+	centerx = 0; centery = 0;
+	dx=WIDTH+1000; dy=HEIGHT+1000;
+	vector< b2Vec2 > death_point;
+	vector<pair<vector<b2Vec2>, bool> > GameMap;
+	vector<b2Vec2> goods;
+	vector<pair<pair<b2Vec2, double>, pair<double, bool> > > field;
+	srand(time(0));
+	
+	for(int i = 0; i < 500; ++i)
+	{
+		field.push_back(make_pair(make_pair(b2Vec2(rand() % WIDTH, rand() % HEIGHT), 0)
+		, make_pair(2, true)));
+	}
+	g = 0;
+	sb.create(GameMap , field, death_point , 0.5, true);
+	sb.set_goal(dx,dy);
+
+	b2Body* tmp = sb.world->GetBodyList();
+	while(tmp)
+	{
+		int v = *((int*)tmp -> GetUserData());
+		int fac1, fac2;
+		fac1 = (rand() % 2) ? 1 : -1;
+		fac2 = (rand() % 2) ? 1 : -1;
+		if(v >= 10000)
+		{
+			tmp -> ApplyForce(b2Vec2(rand() % 100 * fac1, rand() % 100 * fac2), tmp -> GetWorldCenter());
+		}
+		tmp = tmp -> GetNext();
+	}
+}
+void init_level5(int &dx, int &dy)
+{
+	int centerx,centery;//开始点坐标
+	
+	centerx = 0; centery = 0;
+	dx=WIDTH+1000; dy=HEIGHT+1000;
+	vector< b2Vec2 > death_point;
+	vector<pair<vector<b2Vec2>, bool> > GameMap;
+	vector<b2Vec2> goods;
+	vector<pair<pair<b2Vec2, double>, pair<double, bool> > > field;
+	srand(time(0));
+	
+	for(int i = 0; i < 500; ++i)
+	{
+		field.push_back(make_pair(make_pair(b2Vec2(rand() % WIDTH, rand() % HEIGHT), 0)
+		, make_pair(2, true)));
+	}
+	g = 9.8;
+	sb.create(GameMap , field, death_point , 0.5, true);
+	sb.set_goal(dx,dy);
+
+	b2Body* tmp = sb.world->GetBodyList();
+	while(tmp)
+	{
+		int v = *((int*)tmp -> GetUserData());
+		int fac1, fac2;
+		fac1 = (rand() % 2) ? 1 : -1;
+		fac2 = (rand() % 2) ? 1 : -1;
+		if(v >= 10000)
+		{
+			tmp -> ApplyForce(b2Vec2(rand() % 100 * fac1, rand() % 100 * fac2), tmp -> GetWorldCenter());
+		}
+		tmp = tmp -> GetNext();
+	}
+}
+
+
+void init_level6(int &dx, int &dy)
+{
+	int centerx,centery;//开始点坐标
+	
+	centerx = 0; centery = 0;
+	dx=WIDTH+1000; dy=HEIGHT+1000;
+	vector< b2Vec2 > death_point;
+	vector<pair<vector<b2Vec2>, bool> > GameMap;
+	vector<b2Vec2> goods;
+	vector<pair<pair<b2Vec2, double>, pair<double, bool> > > field;
+	srand(time(0));
+	
+	field.push_back(make_pair(make_pair(b2Vec2(WIDTH / 2, HEIGHT / 2), 100)
+		, make_pair(2, false)));
+
+	for(int i = 1; i < 2; ++i)
+	{
+		field.push_back(make_pair(make_pair(b2Vec2(WIDTH / 2, HEIGHT / 2 + rand() % 400), 4)
+		, make_pair(2, true)));
+	}
+	g = 0;
+
+	gpoint.clear();
+	for(int i = 0; i < 360; ++i) 
+	{
+		gpoint.push_back(b2Vec2(WIDTH / 2 + cos((double)i*M_PI/180) * 60, HEIGHT / 2 + sin((double)i*M_PI/180)*60));
+	}
+	GameMap.push_back(make_pair(gpoint, false));
+	gpoint.clear();
+
+
+	sb.create(GameMap , field, death_point , 1, true, false);
+	sb.set_goal(dx,dy);
+
+	b2Body* tmp = sb.world->GetBodyList();
+	while(tmp)
+	{
+		int v = *((int*)tmp -> GetUserData());
+		int fac1, fac2;
+		fac1 = (rand() % 2) ? 1 : -1;
+		fac2 = (rand() % 2) ? 1 : -1;
+		if(v >= 10001)
+		{
+			tmp -> ApplyForce(b2Vec2(60 * fac1, 0), tmp -> GetWorldCenter());
+		}
+		tmp = tmp -> GetNext();
+	}
+}
+
+bool level(int &levelid)
 {
 	SDL_Event event;
 	Uint32 start;
@@ -477,6 +638,48 @@ bool level(int levelid)
 						{ 
 							sb.destroy();
 							running=false;
+							return false;
+						}
+						case SDLK_0:
+						{
+							levelid = 0;
+							sb.destroy();
+							return false;
+						}
+						case SDLK_1:
+						{
+							levelid = 1;
+							sb.destroy();
+							return false;
+						}
+						case SDLK_2:
+						{
+							levelid = 2;
+							sb.destroy();
+							return false;
+						}
+						case SDLK_3:
+						{
+							levelid = 3;
+							sb.destroy();
+							return false;
+						}
+						case SDLK_4:
+						{
+							levelid = 4;
+							sb.destroy();
+							return false;
+						}
+						case SDLK_5:
+						{
+							levelid = 5;
+							sb.destroy();
+							return false;
+						}
+						case SDLK_6:
+						{
+							levelid = 6;
+							sb.destroy();
 							return false;
 						}
 					}
@@ -526,7 +729,6 @@ bool level(int levelid)
 	return false;
 }
 
-
 void init()
 {
 	glMatrixMode(GL_PROJECTION);
@@ -536,6 +738,10 @@ void init()
 	init_func[0] = init_level0;
 	init_func[1] = init_level2;
 	init_func[2] = init_level1;
+	init_func[3] = init_level3;
+	init_func[4] = init_level4;
+	init_func[5] = init_level5;
+	init_func[6] = init_level6;
 	color[0].r = 0.293, color[0].g = 0, color[0].b = 0.508;
 	color[1].r = 0, color[1].g = 0.801, color[1].b = 0.398;
 	color[2].r = 0, color[2].g = 0.801, color[2].b = 0;
@@ -550,7 +756,7 @@ int main(int argc,char** argv)
 	init();
 	srand(2);
 	
-	for(int i = 1; i < MAXLEVEL; )
+	for(int i = 0; i < MAXLEVEL; )
 	{
 		if(level(i))
 			++i;
