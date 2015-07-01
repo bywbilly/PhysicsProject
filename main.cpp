@@ -57,7 +57,7 @@ void change_color(int size = 0)
 		start = (start + 1) % 3, current_length = 0;
 	if (now_time != time(0))
 	{
-		current_length += 0.0003;
+		current_length += 0.00005;
 	}
 	colorVector dir = color[(start + 1) % 3] - color[start];
 	dir = dir / dir.len();
@@ -206,7 +206,7 @@ void init_level0(int &dx, int &dy)
 	{//设置障碍物
 		vector<pair<vector<b2Vec2>, bool> > GameMap;
 		vector<b2Vec2> goods;
-		vector<pair<pair<b2Vec2, double>, double> > field;
+		vector<pair<pair<b2Vec2, double>, pair<double, bool> > > field;
 		//GameMap.push_back( pair< b2Vec2(,) , false> );
 		goods.push_back( b2Vec2(WIDTH*2/5,HEIGHT-20) );
 		goods.push_back( b2Vec2(WIDTH-20,HEIGHT-20) );
@@ -235,7 +235,7 @@ void init_level1(int &dx, int &dy)
 	{//设置障碍物
 		vector<pair<vector<b2Vec2>, bool> > GameMap;
 		vector<b2Vec2> goods;
-		vector<pair<pair<b2Vec2, double>, double> > field;
+		vector<pair<pair<b2Vec2, double>, pair<double, bool> > > field;
 
 		goods.push_back( b2Vec2(0,HEIGHT/3) );
 		goods.push_back( b2Vec2(0,-10+HEIGHT/3) );
@@ -324,11 +324,11 @@ void init_level1(int &dx, int &dy)
 		
 		///////////////////////////
 		
-		field.push_back(make_pair(make_pair(b2Vec2(500,20) , -3000.0), 3));
-		field.push_back(make_pair(make_pair(b2Vec2(330,-100 + 5*HEIGHT/6 ) , 3900.0), 3));
+		field.push_back(make_pair(make_pair(b2Vec2(500,20) , -3000.0), make_pair(3, false)));
+		field.push_back(make_pair(make_pair(b2Vec2(330,-100 + 5*HEIGHT/6 ) , 3900.0), make_pair(3, false)));
 		
-		field.push_back(make_pair(make_pair(b2Vec2(900,-200 + 5*HEIGHT/6 ) , 3000.0), 3));
-		field.push_back(make_pair(make_pair(b2Vec2(900,+70 + 5*HEIGHT/6 ) , -3000.0), 3));
+		field.push_back(make_pair(make_pair(b2Vec2(900,-200 + 5*HEIGHT/6 ) , 3000.0), make_pair(3, false)));
+		field.push_back(make_pair(make_pair(b2Vec2(900,+70 + 5*HEIGHT/6 ) , -3000.0), make_pair(3, false)));
 		
 		sb.create(GameMap , field, death_point , 1.5);
 	}
@@ -348,7 +348,7 @@ void init_level2(int &dx, int &dy)
 	{//设置障碍物
 		vector<pair<vector<b2Vec2>, bool> > GameMap;
 		vector<b2Vec2> goods;
-		vector<pair<pair<b2Vec2, double>, double> > field;
+		vector<pair<pair<b2Vec2, double>, pair<double, bool> > > field;
 
 		goods.push_back(b2Vec2(150, 120));
 		goods.push_back(b2Vec2(350, 120));
@@ -431,11 +431,11 @@ void init_level2(int &dx, int &dy)
 		goods.clear();
 		
 
-		field.push_back(make_pair(make_pair(b2Vec2(475, 30), 10), 0));
-		field.push_back(make_pair(make_pair(b2Vec2(320, 600), 2), 0));
-		field.push_back(make_pair(make_pair(b2Vec2(450, 380), 3), 0));
-		field.push_back(make_pair(make_pair(b2Vec2(700, 380), 5), 0));
-		field.push_back(make_pair(make_pair(b2Vec2(730, 244), 7), 0));
+		field.push_back(make_pair(make_pair(b2Vec2(475, 30), 10), make_pair(0, false)));
+		field.push_back(make_pair(make_pair(b2Vec2(320, 600), 2), make_pair(0, false)));
+		field.push_back(make_pair(make_pair(b2Vec2(450, 380), 3), make_pair(0, false)));
+		field.push_back(make_pair(make_pair(b2Vec2(700, 380), 5), make_pair(0, false)));
+		field.push_back(make_pair(make_pair(b2Vec2(730, 244), 7), make_pair(0, false)));
 		
 		//goods.clear();
 
@@ -534,8 +534,8 @@ void init()
 	glMatrixMode(GL_MODELVIEW);
 	glClearColor(0,0,0,1);
 	init_func[0] = init_level0;
-	init_func[1] = init_level1;
-	init_func[2] = init_level2;
+	init_func[1] = init_level2;
+	init_func[2] = init_level1;
 	color[0].r = 0.293, color[0].g = 0, color[0].b = 0.508;
 	color[1].r = 0, color[1].g = 0.801, color[1].b = 0.398;
 	color[2].r = 0, color[2].g = 0.801, color[2].b = 0;
@@ -550,7 +550,7 @@ int main(int argc,char** argv)
 	init();
 	srand(2);
 	
-	for(int i = 2; i < MAXLEVEL; )
+	for(int i = 1; i < MAXLEVEL; )
 	{
 		if(level(i))
 			++i;

@@ -22,7 +22,7 @@ public:
 	double radius;
 	b2World *world;
 	int userdata[MAX_BODY_LIMIT], cnt;
-	vector<pair<pair<b2Vec2, double>, double> > field;
+	vector<pair<pair<b2Vec2, double>, pair<double, bool> > > field;
 	vector<b2Vec2> deathPoint;
 	bool isCreated;
 	b2Body* addRect(int x,int y,int w,int h,bool dyn=true, double friction = 0.5)
@@ -112,7 +112,7 @@ public:
         fprintf(stderr, "ADD POLYGON SUCCESS\n");
 	}
 
-	void init(const vector<pair<vector<b2Vec2>, bool> > &GameMap, const vector<pair <pair<b2Vec2, double>, double> > &Field)
+	void init(const vector<pair<vector<b2Vec2>, bool> > &GameMap, const vector<pair<pair<b2Vec2, double>, pair<double, bool> > > &Field)
 	{
 		assert(isCreated);
 		addRect(WIDTH/2,0,WIDTH,10,false);
@@ -130,7 +130,7 @@ public:
 				point.push_back(field[i].first.first + b2Vec2(5 * cos((double)j * M_PI / 180), 5 * sin((double)j * M_PI / 180)));
 			}
 			fprintf(stderr, "add field poly\n");
-			addPolygon(point, false);
+			addPolygon(point, field[i].second.second, 1, 0, 10000 + i);
 			field[i].first.first.x *= P2M, field[i].first.first.y *= P2M;
 		}
 	}
@@ -145,7 +145,7 @@ public:
 		world = NULL;
 	}
 
-	void create(vector<pair<vector<b2Vec2>, bool> > GameMap, vector<pair<pair<b2Vec2, double>, double> > field, vector<b2Vec2> dPoint, double r)
+	void create(vector<pair<vector<b2Vec2>, bool> > GameMap, vector<pair<pair<b2Vec2, double>, pair<double, bool> > > field, vector<b2Vec2> dPoint, double r)
 	{
 		isCreated = true;
 		radius = r;
@@ -183,6 +183,16 @@ public:
 		int count = 0;
 		while(tmp)
 		{
+			int v = *((int*)tmp -> GetUserData());
+			if(v >= 10000)
+			{
+				field[v - 10000].first.first = tmp -> GetWorldCenter();
+			}
+			tmp = tmp -> GetNext();
+		}
+		tmp = world -> GetBodyList();
+		while(tmp)
+		{
 			b2Vec2 pos = tmp -> GetWorldCenter();
 			b2Vec2 force;
 			force = b2Vec2(0, 0);
@@ -203,15 +213,18 @@ public:
 					}
 				}
 			}
+			int v = *((int*)tmp -> GetUserData());
 			for(int i = 0; i < field.size(); ++i)
 			{
+				if(i == v - 10000) continue;
 				double r = sqrt((pos.x - field[i].first.first.x) * (pos.x - field[i].first.first.x) + (pos.y - field[i].first.first.y) * (pos.y - field[i].first.first.y));
 				b2Vec2 direction = field[i].first.first - pos;
 				double len = sqrt(direction.x * direction.x + direction.y * direction.y);
-				direction.x /= len * pow(r, field[i].second), direction.y /= len * pow(r, field[i].second);
+				direction.x /= len * pow(r, field[i].second.first), direction.y /= len * pow(r, field[i].second.first);
 				direction.x *= field[i].first.second, direction.y *= field[i].first.second;
 				force = force + direction;
 			}
+			fprintf(stderr, "Force %f %f\n", force.x, force.y);
 			tmp -> ApplyForce(force, pos);
 			tmp=tmp->GetNext();
 		}
