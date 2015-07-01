@@ -17,6 +17,8 @@ using namespace std;
 
 vector<b2Vec2> gpoint;
 Simulator sb;
+const int MAXLEVEL = 2;
+void (*init_func[MAXLEVEL])(int&, int&);
 
 b2Body* addRect(int x,int y,int w,int h,bool dyn=true)
 {
@@ -70,20 +72,11 @@ void draw_poly(vector<b2Vec2> points,b2Vec2 center,float angle)
 	glPopMatrix();
 }
 
-void init()
-{
-	glMatrixMode(GL_PROJECTION);
-	glOrtho(0,WIDTH,HEIGHT,0,-1,1);
-	glMatrixMode(GL_MODELVIEW);
-	glClearColor(0,0,0,1);
-	//sb.create(vector<pair<vector<b2Vec2>, bool> >(), vector<pair<b2Vec2, double> >());
-}
-
 void display(int dx,int dy)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
-	/*
+	#ifdef __APPLE__
 	glEnable(GL_LINE_SMOOTH);
 	glEnable(GL_POINT_SMOOTH);
 	glEnable(GL_POLYGON_SMOOTH);
@@ -92,7 +85,7 @@ void display(int dx,int dy)
 	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	*/
+	#endif
 	b2Body* tmp=sb.world->GetBodyList();
 	vector<b2Vec2> points;
 	int count = 0;
@@ -143,14 +136,35 @@ void moveRect(double x, double y)
 	}
 }
 
-
-void level_2()
+void init_level0(int &dx, int &dy)
 {
-	SDL_Event event;
-	Uint32 start;
-	bool running=true;
 	int centerx,centery;//开始点坐标
-	int dx,dy;//目的地
+	
+	centerx = WIDTH/7; centery = 20;
+	dx=WIDTH-70; dy=HEIGHT-120; 
+	
+	{//设置障碍物
+		vector<pair<vector<b2Vec2>, bool> > GameMap;
+		vector<b2Vec2> goods;
+		vector<pair<b2Vec2, double> > field;
+		//GameMap.push_back( pair< b2Vec2(,) , false> );
+		goods.push_back( b2Vec2(WIDTH*2/5,HEIGHT-20) );
+		goods.push_back( b2Vec2(WIDTH-20,HEIGHT-20) );
+		goods.push_back( b2Vec2(WIDTH-20,HEIGHT-90) );
+		goods.push_back( b2Vec2(WIDTH*2/3,HEIGHT-90) );
+		GameMap.push_back( make_pair(goods , false) );
+		goods.clear();
+		sb.create(GameMap , field, 0.5);
+	}
+	sb.set_goal(dx,dy);
+
+	for(int i = 0; i < 360; ++i) {gpoint.push_back(b2Vec2(centerx + cos((double)i*M_PI/180) * 30, centery + sin((double)i*M_PI/180)*30));}
+	sb.addPolygon(gpoint, true, 0, 0, -1); gpoint.clear();
+}
+
+void init_level1(int &dx, int &dy)
+{
+	int centerx,centery;//开始点坐标
 	
 	centerx = WIDTH/7; centery = 20;
 	dx=WIDTH-70; dy=-40+5*HEIGHT/6; 
@@ -247,7 +261,7 @@ void level_2()
 		
 		///////////////////////////
 		
-		field.push_back(make_pair(b2Vec2(500,+20+HEIGHT/3) , 1000.0));
+		field.push_back(make_pair(b2Vec2(500,+20+HEIGHT/3) , 1.0));
 		
 		sb.create(GameMap , field, 1.0);
 	}
@@ -255,104 +269,17 @@ void level_2()
 
 	for(int i = 0; i < 360; ++i) {gpoint.push_back(b2Vec2(centerx + cos((double)i*M_PI/180) * 30, centery + sin((double)i*M_PI/180)*30));}
 	sb.addPolygon(gpoint, true, 0, 0, -1); gpoint.clear();
-	
-	
-	
-	
-	while(running)
-	{
-		start=SDL_GetTicks();
-		while(SDL_PollEvent(&event))
-		{
-			switch(event.type)
-			{
-				case SDL_QUIT: { running=false; sb.destroy(); break;}
-
-				case SDL_KEYDOWN:
-					switch(event.key.keysym.sym)
-					{
-						case SDLK_ESCAPE: { running=false; sb.destroy(); exit(0); break; }
-						case SDLK_SPACE: 
-						{ 
-							sb.destroy();
-							level_2();
-							running=false;
-							return;
-							break;
-						}
-					}
-					break;
-
-				case SDL_MOUSEBUTTONDOWN:
-					int x,y;
-					switch(event.button.button)
-                    {
-                	  case SDL_BUTTON_LEFT:
-                	  fprintf(stderr, "LEFT DOWN\n");
-                      x = event.button.x;
-                      y = event.button.y;
-                      gpoint.push_back(b2Vec2(x, y));
-                      break;
-                      case SDL_BUTTON_RIGHT:
-                	  fprintf(stderr, "RIGHT DOWN\n");
-                      if(gpoint.size() == 0) break;
-                      sb.addPolygon(gpoint, true);
-                      gpoint.clear();
-                      break;
-                    }
-					break;
-				default:
-					break;
-			}
-		}
-
-		display(dx,dy);
-		if(sb.simulateNextStep())
-		{
-			sb.destroy();
-		//	level_3();
-			running=false;
-			break;
-		}
-		SDL_GL_SwapBuffers();
-		if(1000.0/60>SDL_GetTicks()-start)
-			SDL_Delay(1000.0/60-(SDL_GetTicks()-start));
-	}
-
 }
 
-
-void level_1()
+bool level(int levelid)
 {
 	SDL_Event event;
 	Uint32 start;
 	bool running=true;
-	int centerx,centery;//开始点坐标
-	int dx,dy;//目的地
-	
-	centerx = WIDTH/7; centery = 20;
-	dx=WIDTH-70; dy=HEIGHT-120; 
-	
-	{//设置障碍物
-		vector<pair<vector<b2Vec2>, bool> > GameMap;
-		vector<b2Vec2> goods;
-		vector<pair<b2Vec2, double> > field;
-		//GameMap.push_back( pair< b2Vec2(,) , false> );
-		goods.push_back( b2Vec2(WIDTH*2/5,HEIGHT-20) );
-		goods.push_back( b2Vec2(WIDTH-20,HEIGHT-20) );
-		goods.push_back( b2Vec2(WIDTH-20,HEIGHT-90) );
-		goods.push_back( b2Vec2(WIDTH*2/3,HEIGHT-90) );
-		GameMap.push_back( make_pair(goods , false) );
-		goods.clear();
-		sb.create(GameMap , field, 0.5);
-	}
-	sb.set_goal(dx,dy);
 
-	for(int i = 0; i < 360; ++i) {gpoint.push_back(b2Vec2(centerx + cos((double)i*M_PI/180) * 30, centery + sin((double)i*M_PI/180)*30));}
-	sb.addPolygon(gpoint, true, 0, 0, -1); gpoint.clear();
-	
-	
-	
+	int dx,dy;//目的地
+	if(levelid >= MAXLEVEL) return true;
+	init_func[levelid](dx, dy);
 	
 	while(running)
 	{
@@ -370,9 +297,8 @@ void level_1()
 						case SDLK_SPACE: 
 						{ 
 							sb.destroy();
-							level_1();
 							running=false;
-							return;
+							return false;
 							break;
 						}
 					}
@@ -405,15 +331,26 @@ void level_1()
 		if(sb.simulateNextStep())
 		{
 			sb.destroy();
-			level_2();
-			running=false;
-			break;
+			running = false;
+			return true;
 		}
 		SDL_GL_SwapBuffers();
 		if(1000.0/60>SDL_GetTicks()-start)
 			SDL_Delay(1000.0/60-(SDL_GetTicks()-start));
 	}
+	return false;
+}
 
+
+void init()
+{
+	glMatrixMode(GL_PROJECTION);
+	glOrtho(0,WIDTH,HEIGHT,0,-1,1);
+	glMatrixMode(GL_MODELVIEW);
+	glClearColor(0,0,0,1);
+	//sb.create(vector<pair<vector<b2Vec2>, bool> >(), vector<pair<b2Vec2, double> >());
+	init_func[0] = init_level0;
+	init_func[1] = init_level1;
 }
 
 int main(int argc,char** argv)
@@ -424,7 +361,11 @@ int main(int argc,char** argv)
 	init();
 	srand(2);
 	
-	level_2();
+	for(int i = 0; i < MAXLEVEL; )
+	{
+		if(level(i))
+			++i;
+	}
 	
 	SDL_Quit();
 	return 0;

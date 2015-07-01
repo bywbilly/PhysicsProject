@@ -8,6 +8,7 @@
 #include "convexhull.h"
 #include "Const.h"
 #include <algorithm>
+#include <cassert>
 
 using namespace std;
 
@@ -20,8 +21,10 @@ public:
 	b2World *world;
 	int userdata[1024], cnt;
 	vector<pair<b2Vec2, double> > field;
+	bool isCreated;
 	b2Body* addRect(int x,int y,int w,int h,bool dyn=true, double friction = 0.5)
 	{
+		assert(isCreated);
 		b2BodyDef bodydef;
 		bodydef.position.Set(x*P2M,y*P2M);
 		if(dyn)
@@ -48,6 +51,7 @@ public:
 	/*return true if the polygon is valid*/
 	void addPolygon(vector<b2Vec2> points, bool canMove, double density = 1, double friction = 0.00, int usrdata = 1)
 	{
+		assert(isCreated);
 		fprintf(stderr, "ADD POLYGON\n");
 		for (int i = 0; i < points.size(); ++i)
 			points[i].x *= P2M, points[i].y *= P2M;
@@ -107,6 +111,7 @@ public:
 
 	void init(const vector<pair<vector<b2Vec2>, bool> > &GameMap, const vector<pair<b2Vec2, double> > &Field)
 	{
+		assert(isCreated);
 		addRect(WIDTH/2,0,WIDTH,10,false);
 		addRect(WIDTH/2,HEIGHT-10,WIDTH,20,false);
 		addRect(0,0,20,HEIGHT * 10,false);
@@ -128,15 +133,18 @@ public:
 	}
 	Simulator()
 	{
+		isCreated = false;
 	}
 	~Simulator()
 	{
+		isCreated = false;
 		delete world;
 		world = NULL;
 	}
 
 	void create(vector<pair<vector<b2Vec2>, bool> > GameMap, vector<pair<b2Vec2, double> > field, double r)
 	{
+		isCreated = true;
 		radius = r;
 		cnt = 0;
 		world = new b2World(b2Vec2(0, g), false);
@@ -145,13 +153,16 @@ public:
 
 	void destroy()
 	{
+		if(!isCreated)
+			return;
+		isCreated = false;
 		delete world;
 		world = NULL;
 	}
 
 	void set_goal(double dx, double dy)
 	{
-		/*TODO goal*/
+		assert(isCreated);
 		goalx = dx * P2M;
 		goaly = dy * P2M;
 	}
@@ -159,8 +170,8 @@ public:
 	/*The return value should be a image*/
 	bool simulateNextStep()
 	{
+		assert(isCreated);
 		world -> Step(1.0 / 60, 8, 8);
-		/*TODO add goal*/
 		b2Body* tmp=world->GetBodyList();
 		vector<b2Vec2> points;
 		int count = 0;
@@ -182,7 +193,7 @@ public:
 				double r_square = (pos.x - field[i].first.x) * (pos.x - field[i].first.x) + (pos.y - field[i].first.y) * (pos.y - field[i].first.y);
 				b2Vec2 direction = field[i].first - pos;
 				double len = sqrt(direction.x * direction.x + direction.y * direction.y);
-				direction.x /= len, direction.y /= len;
+				direction.x /= len * r_square, direction.y /= len * r_square;
 				direction.x *= field[i].second, direction.y *= field[i].second;
 				force = force + direction;
 			}
