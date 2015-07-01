@@ -12,6 +12,8 @@
 
 using namespace std;
 
+const int MAX_BODY_LIMIT = 1024;
+
 class Simulator
 {
 private:
@@ -19,8 +21,9 @@ public:
 	double goalx, goaly;
 	double radius;
 	b2World *world;
-	int userdata[1024], cnt;
-	vector<pair<b2Vec2, double> > field;
+	int userdata[MAX_BODY_LIMIT], cnt;
+	vector<pair<b2Vec2, double> > field, accField;
+	vector<b2Vec2> deathPoint;
 	bool isCreated;
 	b2Body* addRect(int x,int y,int w,int h,bool dyn=true, double friction = 0.5)
 	{
@@ -142,13 +145,14 @@ public:
 		world = NULL;
 	}
 
-	void create(vector<pair<vector<b2Vec2>, bool> > GameMap, vector<pair<b2Vec2, double> > field, double r)
+	void create(vector<pair<vector<b2Vec2>, bool> > GameMap, vector<pair<b2Vec2, double> > field, vector<b2Vec2> dPoint, double r)
 	{
 		isCreated = true;
 		radius = r;
 		cnt = 0;
 		world = new b2World(b2Vec2(0, g), false);
 		init(GameMap, field);
+		deathPoint = dPoint;
 	}
 
 	void destroy()
@@ -168,7 +172,7 @@ public:
 	}
 
 	/*The return value should be a image*/
-	bool simulateNextStep()
+	int simulateNextStep()
 	{
 		assert(isCreated);
 		world -> Step(1.0 / 60, 8, 8);
@@ -185,7 +189,16 @@ public:
 				if((pos.x - goalx) * (pos.x - goalx) + (pos.y - goaly) * (pos.y - goaly) <= radius * radius)
 				{
 					fprintf(stderr, "WIN\n");
-					return true;
+					return 1;
+				}
+				for(int i = 0; i < deathPoint.size(); ++i)
+				{
+					b2Vec2 dp = deathPoint[i];
+					if((pos.x - dp.x) * (pos.x - dp.x) + (pos.y - dp.y) * (pos.y - dp.y) <= radius * radius)
+					{
+						fprintf(stderr, "dead\n");
+						return -1;
+					}
 				}
 			}
 			for(int i = 0; i < field.size(); ++i)
@@ -200,7 +213,7 @@ public:
 			tmp -> ApplyForce(force, pos);
 			tmp=tmp->GetNext();
 		}
-		return false;
+		return 0;
 	}
 };
 

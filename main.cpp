@@ -145,7 +145,6 @@ void init_level0(int &dx, int &dy)
 		vector<pair<vector<b2Vec2>, bool> > GameMap;
 		vector<b2Vec2> goods;
 		vector<pair<b2Vec2, double> > field;
-		//GameMap.push_back( pair< b2Vec2(,) , false> );
 		goods.push_back( b2Vec2(WIDTH*2/5,HEIGHT-20) );
 		goods.push_back( b2Vec2(WIDTH-20,HEIGHT-20) );
 		goods.push_back( b2Vec2(WIDTH-20,HEIGHT-90) );
@@ -358,11 +357,9 @@ int main(int argc,char** argv)
 	init();
 	srand(2);
 	
-	for(int i = 0; i < MAXLEVEL; )
-	{
+	for(int i = 1; i < MAXLEVEL; )
 		if(level(i))
 			++i;
-	}
 	
 	SDL_Quit();
 	return 0;
