@@ -19,24 +19,54 @@ vector<b2Vec2> gpoint;
 Simulator sb;
 const int MAXLEVEL = 3;
 void (*init_func[MAXLEVEL])(int&, int&);
-double color[3];
 unsigned now_time;
+class colorVector
+{
+public:
+	double r, g, b;
+	colorVector(){}
+	colorVector(double r, double g, double b): r(r), g(g), b(b){}
+	double len()
+	{
+		return sqrt(r * r + g * g + b * b);
+	}
+	colorVector operator - (const colorVector &x) const
+	{
+		return colorVector(r - x.r, g - x.g, b - x.b);
+	}
+	colorVector operator * (const double x) const
+	{
+		return colorVector(r * x, g * x, b * x);
+	}
+	colorVector operator / (const double x) const
+	{
+		return colorVector(r / x, g / x, b / x);
+	}
+	colorVector operator + (const colorVector &x) const
+	{
+		return colorVector(r + x.r, g + x.g, b + x.b);
+	}
+};
+colorVector color[3];
 
 void change_color(int size = 0)
 {
+	static double current_length = 0;
+	static int start = 0;
+	if(current_length > (color[(start + 1) % 3] - color[start]).len())
+		start = (start + 1) % 3, current_length = 0;
 	if (now_time != time(0))
 	{
-		for (int i = 0; i < 3; i++)
-		{
-			color[i] += 0.03;
-			color[i] = min(color[i], 0.95);
-		}
-		now_time = time(0);
+		current_length += 0.0003;
 	}
+	colorVector dir = color[(start + 1) % 3] - color[start];
+	dir = dir / dir.len();
+	dir = dir * current_length;
+	dir = dir + color[start];
 	if (size > 300)
 		glColor3f(1, 0, 0);
 	else
-		glColor3f(color[0], color[1], color[2]);
+		glColor3f(dir.r, dir.g, dir.b);
 }
 
 b2Body* addRect(int x,int y,int w,int h,bool dyn=true)
@@ -506,13 +536,13 @@ void init()
 	init_func[0] = init_level0;
 	init_func[1] = init_level1;
 	init_func[2] = init_level2;
+	color[0].r = 0.293, color[0].g = 0, color[0].b = 0.508;
+	color[1].r = 0, color[1].g = 0.801, color[1].b = 0.398;
+	color[2].r = 0, color[2].g = 0.801, color[2].b = 0;
 }
 
 int main(int argc,char** argv)
 {
-	color[0] = 0.7;
-	color[1] = 0.1;
-	color[2] = 0.7;
 	now_time = time(0);
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_SetVideoMode(WIDTH,HEIGHT,32,SDL_OPENGL);

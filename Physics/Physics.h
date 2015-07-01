@@ -212,8 +212,6 @@ public:
 				direction.x *= field[i].first.second, direction.y *= field[i].first.second;
 				force = force + direction;
 			}
-			if(*((int*)tmp -> GetUserData()) == -1)
-				fprintf(stderr, "Force %f %f\n", force.x, force.y);
 			tmp -> ApplyForce(force, pos);
 			tmp=tmp->GetNext();
 		}
