@@ -690,13 +690,13 @@ bool level(int &levelid)
 					switch(event.button.button)
 					{
 					case SDL_BUTTON_LEFT:
-					fprintf(stderr, "LEFT DOWN\n");
+					//fprintf(stderr, "LEFT DOWN\n");
 					x = event.button.x;
 					y = event.button.y;
 					gpoint.push_back(b2Vec2(x, y));
 					break;
 					case SDL_BUTTON_RIGHT:
-					fprintf(stderr, "RIGHT DOWN\n");
+					//fprintf(stderr, "RIGHT DOWN\n");
 					if(gpoint.size() == 0) break;
 					sb.addPolygon(gpoint, true);
 					gpoint.clear();

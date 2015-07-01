@@ -56,14 +56,14 @@ public:
 	void addPolygon(vector<b2Vec2> points, bool canMove, double density = 1, double friction = 0.00, int usrdata = 1)
 	{
 		assert(isCreated);
-		fprintf(stderr, "ADD POLYGON\n");
+		//fprintf(stderr, "ADD POLYGON\n");
 		for (int i = 0; i < points.size(); ++i)
 			points[i].x *= P2M, points[i].y *= P2M;
 		points = convexhull(points);
-		fprintf(stderr, "check return\n");
+		//fprintf(stderr, "check return\n");
 		if (points.size() < 3)
 			return;
-		fprintf(stderr, "convexhull SUCCESS %d\n", (int)points.size());
+		//fprintf(stderr, "convexhull SUCCESS %d\n", (int)points.size());
 
 		b2BodyDef bodydef;
 		b2Vec2 Gcenter;
@@ -93,9 +93,9 @@ public:
 		{
 			f[i] = points[i] - Gcenter;
 		}
-		fprintf(stderr, "start Set\n");
+		//fprintf(stderr, "start Set\n");
 		shape.Set(f, points.size());
-		fprintf(stderr, "end Set\n");
+		//fprintf(stderr, "end Set\n");
 		delete f;
 
 		b2FixtureDef fixturedef;
@@ -106,7 +106,7 @@ public:
 		body->CreateFixture(&fixturedef);
 		body->SetUserData(&userdata[cnt]);
 		userdata[cnt++] = usrdata;
-        fprintf(stderr, "ADD POLYGON SUCCESS\n");
+        //fprintf(stderr, "ADD POLYGON SUCCESS\n");
 	}
 
 	void init(const vector<pair<vector<b2Vec2>, bool> > &GameMap, const vector<pair<pair<b2Vec2, double>, pair<double, bool> > > &Field
@@ -130,7 +130,7 @@ public:
 			{
 				point.push_back(field[i].first.first + b2Vec2(5 * cos((double)j * M_PI / 180), 5 * sin((double)j * M_PI / 180)));
 			}
-			fprintf(stderr, "add field poly\n");
+			//fprintf(stderr, "add field poly\n");
 			addPolygon(point, field[i].second.second, 1, 0, 10000 + i);
 			field[i].first.first.x *= P2M, field[i].first.first.y *= P2M;
 		}
@@ -206,7 +206,7 @@ public:
 			{
 				if((pos.x - goalx) * (pos.x - goalx) + (pos.y - goaly) * (pos.y - goaly) <= radius * radius)
 				{
-					fprintf(stderr, "WIN\n");
+					//fprintf(stderr, "WIN\n");
 					return 1;
 				}
 				for(int i = 0; i < deathPoint.size(); ++i)
@@ -214,7 +214,7 @@ public:
 					b2Vec2 dp = deathPoint[i];
 					if((pos.x - dp.x) * (pos.x - dp.x) + (pos.y - dp.y) * (pos.y - dp.y) <= radius * radius)
 					{
-						fprintf(stderr, "dead\n");
+						//fprintf(stderr, "dead\n");
 						return -1;
 					}
 				}
@@ -230,7 +230,7 @@ public:
 				direction.x *= field[i].first.second, direction.y *= field[i].first.second;
 				force = force + direction;
 			}
-			fprintf(stderr, "Force %f %f\n", force.x, force.y);
+			//fprintf(stderr, "Force %f %f\n", force.x, force.y);
 			tmp -> ApplyForce(force, pos);
 			tmp=tmp->GetNext();
 		}
