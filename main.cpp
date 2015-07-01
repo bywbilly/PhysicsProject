@@ -143,9 +143,8 @@ void moveRect(double x, double y)
 	}
 }
 
-/*
 
-int level_2()
+void level_2()
 {
 	SDL_Event event;
 	Uint32 start;
@@ -154,122 +153,111 @@ int level_2()
 	int dx,dy;//目的地
 	
 	centerx = WIDTH/7; centery = 20;
-	dx=WIDTH-70; dy=HEIGHT-120; 
-	sb.set_goal(dx,dy);
-	
-	for(int i = 0; i < 360; ++i) {gpoint.push_back(b2Vec2(centerx + cos((double)i*M_PI/180) * 30, centery + sin((double)i*M_PI/180)*30));}
-	sb.addPolygon(gpoint, true, 0, 0); gpoint.clear();
-	
+	dx=WIDTH-70; dy=-40+5*HEIGHT/6; 
+
 	{//设置障碍物
 		vector<pair<vector<b2Vec2>, bool> > GameMap;
 		vector<b2Vec2> goods;
 		vector<pair<b2Vec2, double> > field;
-		//GameMap.push_back( pair< b2Vec2(,) , false> );
-		goods.push_back( b2vec2(WIDTH*2/5,HEIGHT-20) );
-		goods.push_back( b2vec2(WIDTH-20,HEIGHT-20) );
-		goods.push_back( b2vec2(WIDTH-20,HEIGHT-90) );
-		goods.push_back( b2vec2(WIDTH*2/3,HEIGHT-90) );
-		GameMap.push_back( pair< goods , false> );
-		goods.clear();
 
-	}	
-	
-	sb.create(GameMap , field);
-	
-	while(running)
-	{
-		start=SDL_GetTicks();
-		while(SDL_PollEvent(&event))
-		{
-			switch(event.type)
-			{
-				case SDL_QUIT: { running=false; sb.destroy(); break;}
-
-				case SDL_KEYDOWN:
-					switch(event.key.keysym.sym)
-					{
-						case SDLK_ESCAPE: { running=false; sb.destroy(); break; }
-						case SDLK_SPACE: 
-						{ 
-							sb.destroy();
-							level_2();
-							running=false;
-							break;
-						}
-					}
-					break;
-
-				case SDL_MOUSEBUTTONDOWN:
-					int x,y;
-					switch(event.button.button)
-                    {
-                	  case SDL_BUTTON_LEFT:
-                	  fprintf(stderr, "LEFT DOWN\n");
-                      x = event.button.x;
-                      y = event.button.y;
-                      gpoint.push_back(b2Vec2(x, y));
-                      break;
-                      case SDL_BUTTON_RIGHT:
-                	  fprintf(stderr, "RIGHT DOWN\n");
-                      if(gpoint.size() == 0) break;
-                      sb.addPolygon(gpoint, true);
-                      gpoint.clear();
-                      break;
-                    }
-					break;
-				default:
-					break;
-			}
-		}
-
-		display(dx,dy);
-		sb.simulateNextStep();
-		SDL_GL_SwapBuffers();
-		if(1000.0/60>SDL_GetTicks()-start)
-			SDL_Delay(1000.0/60-(SDL_GetTicks()-start));
-		
-		if( sb.victory() ) 
-		{
-			sb.destroy();
-			//level_3();
-			running=false;
-			break;
-		}
-	}
-
-}
-
-*/
-
-void level_1()
-{
-	SDL_Event event;
-	Uint32 start;
-	bool running=true;
-	int centerx,centery;//开始点坐标
-	int dx,dy;//目的地
-	
-	centerx = WIDTH/7; centery = 20;
-	dx=WIDTH-70; dy=HEIGHT-120; 
-	
-	{//设置障碍物
-		vector<pair<vector<b2Vec2>, bool> > GameMap;
-		vector<b2Vec2> goods;
-		vector<pair<b2Vec2, double> > field;
-		//GameMap.push_back( pair< b2Vec2(,) , false> );
-		goods.push_back( b2Vec2(WIDTH*2/5,HEIGHT-20) );
-		goods.push_back( b2Vec2(WIDTH-20,HEIGHT-20) );
-		goods.push_back( b2Vec2(WIDTH-20,HEIGHT-90) );
-		goods.push_back( b2Vec2(WIDTH*2/3,HEIGHT-90) );
+		goods.push_back( b2Vec2(0,HEIGHT/3) );
+		goods.push_back( b2Vec2(0,-10+HEIGHT/3) );
+		goods.push_back( b2Vec2(200,-10+HEIGHT/3) );
+		goods.push_back( b2Vec2(200,HEIGHT/3) );
 		GameMap.push_back( make_pair(goods , false) );
-		field.push_back(make_pair(b2Vec2(centerx, centery), 10));
 		goods.clear();
-		sb.create(GameMap , field, 0.5);
+		
+		goods.push_back( b2Vec2(200,HEIGHT/3) );
+		goods.push_back( b2Vec2(200,-30+HEIGHT/3) );
+		goods.push_back( b2Vec2(300,-30+HEIGHT/3) );
+		goods.push_back( b2Vec2(300,HEIGHT/3) );
+		GameMap.push_back( make_pair(goods , false) );
+		goods.clear();
+		
+		goods.push_back( b2Vec2(300,HEIGHT/3) );
+		goods.push_back( b2Vec2(300,-60+HEIGHT/3) );
+		goods.push_back( b2Vec2(400,-60+HEIGHT/3) );
+		goods.push_back( b2Vec2(400,HEIGHT/3) );
+		GameMap.push_back( make_pair(goods , false) );
+		goods.clear();
+		
+		goods.push_back( b2Vec2(400,HEIGHT/3) );
+		goods.push_back( b2Vec2(400,-60+HEIGHT/3) );
+		goods.push_back( b2Vec2(500,-90+HEIGHT/3) );
+		goods.push_back( b2Vec2(600,-60+HEIGHT/3) );
+		goods.push_back( b2Vec2(600,HEIGHT/3) );
+		GameMap.push_back( make_pair(goods , false) );
+		goods.clear();
+		
+		goods.push_back( b2Vec2(600,HEIGHT/3) );
+		goods.push_back( b2Vec2(600,-30+HEIGHT/3) );
+		goods.push_back( b2Vec2(700,-30+HEIGHT/3) );
+		goods.push_back( b2Vec2(700,HEIGHT/3) );
+		GameMap.push_back( make_pair(goods , false) );
+		goods.clear();
+		
+		goods.push_back( b2Vec2(700,HEIGHT/3) );
+		goods.push_back( b2Vec2(700,-30+HEIGHT/3) );
+		goods.push_back( b2Vec2(1000,-30+HEIGHT/3) );
+		goods.push_back( b2Vec2(1000,HEIGHT/3) );
+		GameMap.push_back( make_pair(goods , false) );
+		goods.clear();
+		
+		goods.push_back( b2Vec2(WIDTH,70+HEIGHT/3) );
+		goods.push_back( b2Vec2(WIDTH,60+HEIGHT/3) );
+		goods.push_back( b2Vec2(500,110+HEIGHT/3) );
+		goods.push_back( b2Vec2(500,120+HEIGHT/3) );
+		GameMap.push_back( make_pair(goods , false) );
+		goods.clear();
+		
+		goods.push_back( b2Vec2(400,120+HEIGHT/3) );
+		goods.push_back( b2Vec2(400,110+HEIGHT/3) );
+		goods.push_back( b2Vec2(500,110+HEIGHT/3) );
+		goods.push_back( b2Vec2(500,120+HEIGHT/3) );
+		GameMap.push_back( make_pair(goods , false) );
+		goods.clear();
+		
+		goods.push_back( b2Vec2(150,120+HEIGHT/3) );
+		goods.push_back( b2Vec2(150,110+HEIGHT/3) );
+		goods.push_back( b2Vec2(250,110+HEIGHT/3) );
+		goods.push_back( b2Vec2(250,120+HEIGHT/3) );
+		GameMap.push_back( make_pair(goods , false) );
+		goods.clear();
+		
+		goods.push_back( b2Vec2(0,5*HEIGHT/6) );
+		goods.push_back( b2Vec2(0,-10+5*HEIGHT/6) );
+		goods.push_back( b2Vec2(250,-10+5*HEIGHT/6) );
+		goods.push_back( b2Vec2(250,5*HEIGHT/6) );
+		GameMap.push_back( make_pair(goods , false) );
+		goods.clear();
+		
+		goods.push_back( b2Vec2(400,5*HEIGHT/6) );
+		goods.push_back( b2Vec2(400,-10+5*HEIGHT/6) );
+		goods.push_back( b2Vec2(600,-10+5*HEIGHT/6) );
+		goods.push_back( b2Vec2(600,5*HEIGHT/6) );
+		GameMap.push_back( make_pair(goods , false) );
+		goods.clear();
+		
+		goods.push_back( b2Vec2(1000,5*HEIGHT/6) );
+		goods.push_back( b2Vec2(1000,-10+5*HEIGHT/6) );
+		goods.push_back( b2Vec2(WIDTH,-10+5*HEIGHT/6) );
+		goods.push_back( b2Vec2(WIDTH,5*HEIGHT/6) );
+		GameMap.push_back( make_pair(goods , false) );
+		goods.clear();
+		
+		///////////////////////////
+		
+		field.push_back(make_pair(b2Vec2(500,+20+HEIGHT/3) , 1000.0));
+		
+		sb.create(GameMap , field, 1.0);
 	}
 	sb.set_goal(dx,dy);
 
 	for(int i = 0; i < 360; ++i) {gpoint.push_back(b2Vec2(centerx + cos((double)i*M_PI/180) * 30, centery + sin((double)i*M_PI/180)*30));}
 	sb.addPolygon(gpoint, true, 0, 0, -1); gpoint.clear();
+	
+	
+	
 	
 	while(running)
 	{
@@ -287,8 +275,9 @@ void level_1()
 						case SDLK_SPACE: 
 						{ 
 							sb.destroy();
-							level_1();
+							level_2();
 							running=false;
+							return;
 							break;
 						}
 					}
@@ -321,7 +310,102 @@ void level_1()
 		if(sb.simulateNextStep())
 		{
 			sb.destroy();
-		//	level_2();
+		//	level_3();
+			running=false;
+			break;
+		}
+		SDL_GL_SwapBuffers();
+		if(1000.0/60>SDL_GetTicks()-start)
+			SDL_Delay(1000.0/60-(SDL_GetTicks()-start));
+	}
+
+}
+
+
+void level_1()
+{
+	SDL_Event event;
+	Uint32 start;
+	bool running=true;
+	int centerx,centery;//开始点坐标
+	int dx,dy;//目的地
+	
+	centerx = WIDTH/7; centery = 20;
+	dx=WIDTH-70; dy=HEIGHT-120; 
+	
+	{//设置障碍物
+		vector<pair<vector<b2Vec2>, bool> > GameMap;
+		vector<b2Vec2> goods;
+		vector<pair<b2Vec2, double> > field;
+		//GameMap.push_back( pair< b2Vec2(,) , false> );
+		goods.push_back( b2Vec2(WIDTH*2/5,HEIGHT-20) );
+		goods.push_back( b2Vec2(WIDTH-20,HEIGHT-20) );
+		goods.push_back( b2Vec2(WIDTH-20,HEIGHT-90) );
+		goods.push_back( b2Vec2(WIDTH*2/3,HEIGHT-90) );
+		GameMap.push_back( make_pair(goods , false) );
+		goods.clear();
+		sb.create(GameMap , field, 0.5);
+	}
+	sb.set_goal(dx,dy);
+
+	for(int i = 0; i < 360; ++i) {gpoint.push_back(b2Vec2(centerx + cos((double)i*M_PI/180) * 30, centery + sin((double)i*M_PI/180)*30));}
+	sb.addPolygon(gpoint, true, 0, 0, -1); gpoint.clear();
+	
+	
+	
+	
+	while(running)
+	{
+		start=SDL_GetTicks();
+		while(SDL_PollEvent(&event))
+		{
+			switch(event.type)
+			{
+				case SDL_QUIT: { running=false; sb.destroy(); break;}
+
+				case SDL_KEYDOWN:
+					switch(event.key.keysym.sym)
+					{
+						case SDLK_ESCAPE: { running=false; sb.destroy(); exit(0); break; }
+						case SDLK_SPACE: 
+						{ 
+							sb.destroy();
+							level_1();
+							running=false;
+							return;
+							break;
+						}
+					}
+					break;
+
+				case SDL_MOUSEBUTTONDOWN:
+					int x,y;
+					switch(event.button.button)
+                    {
+                	  case SDL_BUTTON_LEFT:
+                	  fprintf(stderr, "LEFT DOWN\n");
+                      x = event.button.x;
+                      y = event.button.y;
+                      gpoint.push_back(b2Vec2(x, y));
+                      break;
+                      case SDL_BUTTON_RIGHT:
+                	  fprintf(stderr, "RIGHT DOWN\n");
+                      if(gpoint.size() == 0) break;
+                      sb.addPolygon(gpoint, true);
+                      gpoint.clear();
+                      break;
+                    }
+					break;
+				default:
+					break;
+			}
+		}
+
+		display(dx,dy);
+		if(sb.simulateNextStep())
+		{
+			sb.destroy();
+			level_2();
 			running=false;
 			break;
 		}
@@ -340,7 +424,7 @@ int main(int argc,char** argv)
 	init();
 	srand(2);
 	
-	level_1();
+	level_2();
 	
 	SDL_Quit();
 	return 0;
