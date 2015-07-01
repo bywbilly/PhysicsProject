@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include <cmath>
+#include <ctime>
 #include "Physics/Physics.h"
 #include "Physics/Const.h"
 
@@ -19,6 +20,8 @@ vector<b2Vec2> gpoint;
 Simulator sb;
 const int MAXLEVEL = 2;
 void (*init_func[MAXLEVEL])(int&, int&);
+double color[3];
+unsigned now_time;
 
 b2Body* addRect(int x,int y,int w,int h,bool dyn=true)
 {
@@ -43,9 +46,22 @@ b2Body* addRect(int x,int y,int w,int h,bool dyn=true)
 	return NULL;
 }
 
+void change_color(int size = 0)
+{
+	if (now_time != time(0))
+	{
+		for (int i = 0; i < 3; i++)
+			color[i] += 0.003;
+		now_time = time(0);
+	}
+	if (size > 300)
+		glColor3f(1, 0, 0);
+	else
+		glColor3f(color[0], color[1], color[2]);
+}
+
 void drawSquare(b2Vec2* points,b2Vec2 center,float angle)
 {
-	glColor3f(1,1,1);
 	glPushMatrix();
 		glTranslatef(center.x*M2P,center.y*M2P,0);
 
@@ -59,7 +75,7 @@ void drawSquare(b2Vec2* points,b2Vec2 center,float angle)
 
 void draw_poly(vector<b2Vec2> points,b2Vec2 center,float angle)
 {
-	glColor3f(1,1,1);
+	change_color(points.size());
 	glPushMatrix();
 		glTranslatef(center.x*M2P,center.y*M2P,0);
 
@@ -101,7 +117,7 @@ void display(int dx,int dy)
 	}
 
 	//画目的地
-	glColor3f(1,0,0);
+	change_color();
 	glPushMatrix();
 	glBegin(GL_POLYGON);
 	glVertex2f(dx-3,dy-3);	
@@ -110,8 +126,8 @@ void display(int dx,int dy)
 	glVertex2f(dx+3,dy-3);
 	glEnd();
 	glPopMatrix();
-
-	glColor3f(1,1,1);
+	
+	change_color();
 	glPushMatrix();
 	glBegin(GL_LINE_STRIP);
 	for(int i=0;i!=gpoint.size();++i)
@@ -351,6 +367,10 @@ void init()
 
 int main(int argc,char** argv)
 {
+	color[0] = 0.7;
+	color[1] = 0.1;
+	color[2] = 0.7;
+	now_time = time(0);
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_SetVideoMode(WIDTH,HEIGHT,32,SDL_OPENGL);
 	
