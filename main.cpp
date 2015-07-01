@@ -59,7 +59,6 @@ void drawSquare(b2Vec2* points,b2Vec2 center,float angle)
 
 void draw_poly(vector<b2Vec2> points,b2Vec2 center,float angle)
 {
-//	fprintf(stderr, "center = (%f, %f)\n", center.x, center.y);
 	glColor3f(1,1,1);
 	glPushMatrix();
 		glTranslatef(center.x*M2P,center.y*M2P,0);
@@ -100,16 +99,15 @@ void display(int dx,int dy)
 
 		tmp=tmp->GetNext();
 	}
-//	fprintf(stderr, "Count = %d\n", count);
 
 	//画目的地
 	glColor3f(1,0,0);
 	glPushMatrix();
 	glBegin(GL_POLYGON);
 	glVertex2f(dx-3,dy-3);	
-    glVertex2f(dx-3,dy+3);
-    glVertex2f(dx+3,dy+3);
-    glVertex2f(dx+3,dy-3);
+	glVertex2f(dx-3,dy+3);
+	glVertex2f(dx+3,dy+3);
+	glVertex2f(dx+3,dy-3);
 	glEnd();
 	glPopMatrix();
 
@@ -117,7 +115,7 @@ void display(int dx,int dy)
 	glPushMatrix();
 	glBegin(GL_LINE_STRIP);
 	for(int i=0;i!=gpoint.size();++i)
-            glVertex2f(gpoint[i].x,gpoint[i].y);
+			glVertex2f(gpoint[i].x,gpoint[i].y);
 	glEnd();
 	glPopMatrix();
 }
@@ -294,13 +292,12 @@ bool level(int levelid)
 				case SDL_KEYDOWN:
 					switch(event.key.keysym.sym)
 					{
-						case SDLK_ESCAPE: { running=false; sb.destroy(); exit(0); break; }
+						case SDLK_ESCAPE: { running=false; sb.destroy(); exit(0); }
 						case SDLK_SPACE: 
 						{ 
 							sb.destroy();
 							running=false;
 							return false;
-							break;
 						}
 					}
 					break;
@@ -308,20 +305,20 @@ bool level(int levelid)
 				case SDL_MOUSEBUTTONDOWN:
 					int x,y;
 					switch(event.button.button)
-                    {
-                	  case SDL_BUTTON_LEFT:
-                	  fprintf(stderr, "LEFT DOWN\n");
-                      x = event.button.x;
-                      y = event.button.y;
-                      gpoint.push_back(b2Vec2(x, y));
-                      break;
-                      case SDL_BUTTON_RIGHT:
-                	  fprintf(stderr, "RIGHT DOWN\n");
-                      if(gpoint.size() == 0) break;
-                      sb.addPolygon(gpoint, true);
-                      gpoint.clear();
-                      break;
-                    }
+					{
+					case SDL_BUTTON_LEFT:
+					fprintf(stderr, "LEFT DOWN\n");
+					x = event.button.x;
+					y = event.button.y;
+					gpoint.push_back(b2Vec2(x, y));
+					break;
+					case SDL_BUTTON_RIGHT:
+					fprintf(stderr, "RIGHT DOWN\n");
+					if(gpoint.size() == 0) break;
+					sb.addPolygon(gpoint, true);
+					gpoint.clear();
+					break;
+					}
 					break;
 				default:
 					break;
@@ -349,7 +346,6 @@ void init()
 	glOrtho(0,WIDTH,HEIGHT,0,-1,1);
 	glMatrixMode(GL_MODELVIEW);
 	glClearColor(0,0,0,1);
-	//sb.create(vector<pair<vector<b2Vec2>, bool> >(), vector<pair<b2Vec2, double> >());
 	init_func[0] = init_level0;
 	init_func[1] = init_level1;
 }
