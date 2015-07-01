@@ -22,7 +22,7 @@ public:
 	double radius;
 	b2World *world;
 	int userdata[MAX_BODY_LIMIT], cnt;
-	vector<pair<b2Vec2, double> > field, accField;
+	vector<pair<pair<b2Vec2, double>, double> > field;
 	vector<b2Vec2> deathPoint;
 	bool isCreated;
 	b2Body* addRect(int x,int y,int w,int h,bool dyn=true, double friction = 0.5)
@@ -112,7 +112,7 @@ public:
         fprintf(stderr, "ADD POLYGON SUCCESS\n");
 	}
 
-	void init(const vector<pair<vector<b2Vec2>, bool> > &GameMap, const vector<pair<b2Vec2, double> > &Field)
+	void init(const vector<pair<vector<b2Vec2>, bool> > &GameMap, const vector<pair <pair<b2Vec2, double>, double> > &Field)
 	{
 		assert(isCreated);
 		addRect(WIDTH/2,0,WIDTH,10,false);
@@ -127,11 +127,11 @@ public:
 			vector<b2Vec2> point;
 			for(int j = 0; j < 360; ++j)
 			{
-				point.push_back(field[i].first + b2Vec2(2 * cos((double)j * M_PI / 180), 2 * sin((double)j * M_PI / 180)));
+				point.push_back(field[i].first.first + b2Vec2(5 * cos((double)j * M_PI / 180), 5 * sin((double)j * M_PI / 180)));
 			}
 			fprintf(stderr, "add field poly\n");
 			addPolygon(point, false);
-			field[i].first.x *= P2M, field[i].first.y *= P2M;
+			field[i].first.first.x *= P2M, field[i].first.first.y *= P2M;
 		}
 	}
 	Simulator()
@@ -145,7 +145,7 @@ public:
 		world = NULL;
 	}
 
-	void create(vector<pair<vector<b2Vec2>, bool> > GameMap, vector<pair<b2Vec2, double> > field, vector<b2Vec2> dPoint, double r)
+	void create(vector<pair<vector<b2Vec2>, bool> > GameMap, vector<pair<pair<b2Vec2, double>, double> > field, vector<b2Vec2> dPoint, double r)
 	{
 		isCreated = true;
 		radius = r;
@@ -205,14 +205,15 @@ public:
 			}
 			for(int i = 0; i < field.size(); ++i)
 			{
-				double r_square = (pos.x - field[i].first.x) * (pos.x - field[i].first.x) + (pos.y - field[i].first.y) * (pos.y - field[i].first.y);
-				r_square *= sqrt(r_square);
-				b2Vec2 direction = field[i].first - pos;
+				double r = sqrt((pos.x - field[i].first.first.x) * (pos.x - field[i].first.first.x) + (pos.y - field[i].first.first.y) * (pos.y - field[i].first.first.y));
+				b2Vec2 direction = field[i].first.first - pos;
 				double len = sqrt(direction.x * direction.x + direction.y * direction.y);
-				direction.x /= len * r_square, direction.y /= len * r_square;
-				direction.x *= field[i].second, direction.y *= field[i].second;
+				direction.x /= len * pow(r, field[i].second), direction.y /= len * pow(r, field[i].second);
+				direction.x *= field[i].first.second, direction.y *= field[i].first.second;
 				force = force + direction;
 			}
+			if(*((int*)tmp -> GetUserData()) == -1)
+				fprintf(stderr, "Force %f %f\n", force.x, force.y);
 			tmp -> ApplyForce(force, pos);
 			tmp=tmp->GetNext();
 		}

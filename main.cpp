@@ -17,8 +17,27 @@ using namespace std;
 
 vector<b2Vec2> gpoint;
 Simulator sb;
-const int MAXLEVEL = 2;
+const int MAXLEVEL = 3;
 void (*init_func[MAXLEVEL])(int&, int&);
+double color[3];
+unsigned now_time;
+
+void change_color(int size = 0)
+{
+	if (now_time != time(0))
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			color[i] += 0.03;
+			color[i] = min(color[i], 0.95);
+		}
+		now_time = time(0);
+	}
+	if (size > 300)
+		glColor3f(1, 0, 0);
+	else
+		glColor3f(color[0], color[1], color[2]);
+}
 
 b2Body* addRect(int x,int y,int w,int h,bool dyn=true)
 {
@@ -59,7 +78,7 @@ void drawSquare(b2Vec2* points,b2Vec2 center,float angle)
 
 void draw_poly(vector<b2Vec2> points,b2Vec2 center,float angle)
 {
-	glColor3f(1,1,1);
+	change_color(points.size());
 	glPushMatrix();
 		glTranslatef(center.x*M2P,center.y*M2P,0);
 
@@ -157,7 +176,7 @@ void init_level0(int &dx, int &dy)
 	{//设置障碍物
 		vector<pair<vector<b2Vec2>, bool> > GameMap;
 		vector<b2Vec2> goods;
-		vector<pair<b2Vec2, double> > field;
+		vector<pair<pair<b2Vec2, double>, double> > field;
 		//GameMap.push_back( pair< b2Vec2(,) , false> );
 		goods.push_back( b2Vec2(WIDTH*2/5,HEIGHT-20) );
 		goods.push_back( b2Vec2(WIDTH-20,HEIGHT-20) );
@@ -186,7 +205,7 @@ void init_level1(int &dx, int &dy)
 	{//设置障碍物
 		vector<pair<vector<b2Vec2>, bool> > GameMap;
 		vector<b2Vec2> goods;
-		vector<pair<b2Vec2, double> > field;
+		vector<pair<pair<b2Vec2, double>, double> > field;
 
 		goods.push_back( b2Vec2(0,HEIGHT/3) );
 		goods.push_back( b2Vec2(0,-10+HEIGHT/3) );
@@ -275,14 +294,125 @@ void init_level1(int &dx, int &dy)
 		
 		///////////////////////////
 		
-		field.push_back(make_pair(b2Vec2(500,20) , -3000.0));
-		field.push_back(make_pair(b2Vec2(330,-100 + 5*HEIGHT/6 ) , 3900.0));
+		field.push_back(make_pair(make_pair(b2Vec2(500,20) , -3000.0), 3));
+		field.push_back(make_pair(make_pair(b2Vec2(330,-100 + 5*HEIGHT/6 ) , 3900.0), 3));
 		
-		field.push_back(make_pair(b2Vec2(900,-200 + 5*HEIGHT/6 ) , 3000.0));
-		field.push_back(make_pair(b2Vec2(900,+70 + 5*HEIGHT/6 ) , -3000.0));
+		field.push_back(make_pair(make_pair(b2Vec2(900,-200 + 5*HEIGHT/6 ) , 3000.0), 3));
+		field.push_back(make_pair(make_pair(b2Vec2(900,+70 + 5*HEIGHT/6 ) , -3000.0), 3));
 		
 		sb.create(GameMap , field, death_point , 1.5);
 	}
+	sb.set_goal(dx,dy);
+
+	for(int i = 0; i < 360; ++i) {gpoint.push_back(b2Vec2(centerx + cos((double)i*M_PI/180) * 30, centery + sin((double)i*M_PI/180)*30));}
+	sb.addPolygon(gpoint, true, 0, 0, -1); gpoint.clear();
+}
+
+void init_level2(int &dx, int &dy)
+{
+	int centerx, centery;
+	centerx = WIDTH/7; centery = 20;
+	dx=1000; dy=270; 
+	vector<b2Vec2> death_point;
+	
+	{//设置障碍物
+		vector<pair<vector<b2Vec2>, bool> > GameMap;
+		vector<b2Vec2> goods;
+		vector<pair<pair<b2Vec2, double>, double> > field;
+
+		goods.push_back(b2Vec2(150, 120));
+		goods.push_back(b2Vec2(350, 120));
+		goods.push_back(b2Vec2(150, 150));
+		goods.push_back(b2Vec2(350, 150));
+		GameMap.push_back(make_pair(goods, false));
+		goods.clear();
+		
+		goods.push_back(b2Vec2(500, 120));
+		goods.push_back(b2Vec2(700, 120));
+		goods.push_back(b2Vec2(500, 150));
+		goods.push_back(b2Vec2(700, 150));
+		GameMap.push_back(make_pair(goods, false));
+		goods.clear();
+
+		goods.push_back(b2Vec2(500, 150));
+		goods.push_back(b2Vec2(500, 185));
+		goods.push_back(b2Vec2(450, 185));
+		GameMap.push_back(make_pair(goods, false));
+		goods.clear();
+
+		goods.push_back(b2Vec2(450, 185));
+		goods.push_back(b2Vec2(450, 220));
+		goods.push_back(b2Vec2(400, 220));
+		GameMap.push_back(make_pair(goods, false));
+		goods.clear();
+
+		goods.push_back(b2Vec2(400, 220));
+		goods.push_back(b2Vec2(400, 255));
+		goods.push_back(b2Vec2(350, 255));
+		GameMap.push_back(make_pair(goods, false));
+		goods.clear();
+
+		goods.push_back(b2Vec2(350, 255));
+		goods.push_back(b2Vec2(350, 290));
+		goods.push_back(b2Vec2(300, 290));
+		GameMap.push_back(make_pair(goods, false));
+		goods.clear();
+
+		goods.push_back(b2Vec2(300, 290));
+		goods.push_back(b2Vec2(300, 500));
+		goods.push_back(b2Vec2(350, 500));
+		goods.push_back(b2Vec2(350, 290));
+		GameMap.push_back(make_pair(goods, false));
+		goods.clear();
+
+		goods.push_back(b2Vec2(150, 600));
+		goods.push_back(b2Vec2(160, 600));
+		goods.push_back(b2Vec2(160, 700));
+		goods.push_back(b2Vec2(150, 700));
+		GameMap.push_back(make_pair(goods, false));
+		goods.clear();
+
+		goods.push_back(b2Vec2(160, 670));
+		goods.push_back(b2Vec2(160, 700));
+		goods.push_back(b2Vec2(700, 700));
+		goods.push_back(b2Vec2(700, 670));
+		GameMap.push_back(make_pair(goods, false));
+		goods.clear();
+
+		goods.push_back(b2Vec2(670, 10));
+		goods.push_back(b2Vec2(670, 120));
+		goods.push_back(b2Vec2(700, 120));
+		goods.push_back(b2Vec2(700, 10));
+		GameMap.push_back(make_pair(goods, false));
+		goods.clear();
+
+		goods.push_back(b2Vec2(450, 450));
+		goods.push_back(b2Vec2(700, 450));
+		goods.push_back(b2Vec2(700, 500));
+		goods.push_back(b2Vec2(500, 500));
+		GameMap.push_back(make_pair(goods, false));
+		goods.clear();
+
+		goods.push_back(b2Vec2(800, 300));
+		goods.push_back(b2Vec2(900, 300));
+		goods.push_back(b2Vec2(900, 450));
+		goods.push_back(b2Vec2(800, 450));
+		GameMap.push_back(make_pair(goods, false));
+		goods.clear();
+		
+
+		field.push_back(make_pair(make_pair(b2Vec2(475, 30), 10), 0));
+		field.push_back(make_pair(make_pair(b2Vec2(320, 600), 2), 0));
+		field.push_back(make_pair(make_pair(b2Vec2(450, 380), 3), 0));
+		field.push_back(make_pair(make_pair(b2Vec2(700, 380), 5), 0));
+		field.push_back(make_pair(make_pair(b2Vec2(730, 244), 7), 0));
+		
+		//goods.clear();
+
+		sb.create(GameMap , field, death_point, 0.5);
+
+	}
+	
 	sb.set_goal(dx,dy);
 
 	for(int i = 0; i < 360; ++i) {gpoint.push_back(b2Vec2(centerx + cos((double)i*M_PI/180) * 30, centery + sin((double)i*M_PI/180)*30));}
@@ -375,17 +505,22 @@ void init()
 	glClearColor(0,0,0,1);
 	init_func[0] = init_level0;
 	init_func[1] = init_level1;
+	init_func[2] = init_level2;
 }
 
 int main(int argc,char** argv)
 {
+	color[0] = 0.7;
+	color[1] = 0.1;
+	color[2] = 0.7;
+	now_time = time(0);
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_SetVideoMode(WIDTH,HEIGHT,32,SDL_OPENGL);
 	
 	init();
 	srand(2);
 	
-	for(int i = 1; i < MAXLEVEL; )
+	for(int i = 2; i < MAXLEVEL; )
 	{
 		if(level(i))
 			++i;
