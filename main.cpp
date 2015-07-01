@@ -10,7 +10,6 @@
 #include <cstdlib>
 #include <algorithm>
 #include <cmath>
-#include <ctime>
 #include "Physics/Physics.h"
 #include "Physics/Const.h"
 
@@ -20,8 +19,6 @@ vector<b2Vec2> gpoint;
 Simulator sb;
 const int MAXLEVEL = 2;
 void (*init_func[MAXLEVEL])(int&, int&);
-double color[3];
-unsigned now_time;
 
 b2Body* addRect(int x,int y,int w,int h,bool dyn=true)
 {
@@ -46,22 +43,9 @@ b2Body* addRect(int x,int y,int w,int h,bool dyn=true)
 	return NULL;
 }
 
-void change_color(int size = 0)
-{
-	if (now_time != time(0))
-	{
-		for (int i = 0; i < 3; i++)
-			color[i] += 0.003;
-		now_time = time(0);
-	}
-	if (size > 300)
-		glColor3f(1, 0, 0);
-	else
-		glColor3f(color[0], color[1], color[2]);
-}
-
 void drawSquare(b2Vec2* points,b2Vec2 center,float angle)
 {
+	glColor3f(1,1,1);
 	glPushMatrix();
 		glTranslatef(center.x*M2P,center.y*M2P,0);
 
@@ -75,7 +59,7 @@ void drawSquare(b2Vec2* points,b2Vec2 center,float angle)
 
 void draw_poly(vector<b2Vec2> points,b2Vec2 center,float angle)
 {
-	change_color(points.size());
+	glColor3f(1,1,1);
 	glPushMatrix();
 		glTranslatef(center.x*M2P,center.y*M2P,0);
 
@@ -117,7 +101,7 @@ void display(int dx,int dy)
 	}
 
 	//画目的地
-	change_color();
+	glColor3f(0,1,0);
 	glPushMatrix();
 	glBegin(GL_POLYGON);
 	glVertex2f(dx-3,dy-3);	
@@ -126,8 +110,21 @@ void display(int dx,int dy)
 	glVertex2f(dx+3,dy-3);
 	glEnd();
 	glPopMatrix();
-	
-	change_color();
+
+	//画death地
+	glColor3f(1,0,0);
+	for(int i=0; i!=sb.deathPoint.size();++i)
+	{
+		glPushMatrix();
+		glBegin(GL_POLYGON);
+		glVertex2f(sb.deathPoint[i].x * M2P-3,sb.deathPoint[i].y * M2P-3);	
+		glVertex2f(sb.deathPoint[i].x * M2P-3,sb.deathPoint[i].y * M2P+3);
+		glVertex2f(sb.deathPoint[i].x * M2P+3,sb.deathPoint[i].y * M2P+3);
+		glVertex2f(sb.deathPoint[i].x * M2P+3,sb.deathPoint[i].y * M2P-3);
+		glEnd();
+		glPopMatrix();
+	}
+	glColor3f(1,1,1);
 	glPushMatrix();
 	glBegin(GL_LINE_STRIP);
 	for(int i=0;i!=gpoint.size();++i)
@@ -156,18 +153,19 @@ void init_level0(int &dx, int &dy)
 	
 	centerx = WIDTH/7; centery = 20;
 	dx=WIDTH-70; dy=HEIGHT-120; 
-	
+	vector< b2Vec2 > death_point;
 	{//设置障碍物
 		vector<pair<vector<b2Vec2>, bool> > GameMap;
 		vector<b2Vec2> goods;
 		vector<pair<b2Vec2, double> > field;
+		//GameMap.push_back( pair< b2Vec2(,) , false> );
 		goods.push_back( b2Vec2(WIDTH*2/5,HEIGHT-20) );
 		goods.push_back( b2Vec2(WIDTH-20,HEIGHT-20) );
 		goods.push_back( b2Vec2(WIDTH-20,HEIGHT-90) );
 		goods.push_back( b2Vec2(WIDTH*2/3,HEIGHT-90) );
 		GameMap.push_back( make_pair(goods , false) );
 		goods.clear();
-		sb.create(GameMap , field, 0.5);
+		sb.create(GameMap , field, death_point , 0.5 );
 	}
 	sb.set_goal(dx,dy);
 
@@ -178,6 +176,9 @@ void init_level0(int &dx, int &dy)
 void init_level1(int &dx, int &dy)
 {
 	int centerx,centery;//开始点坐标
+	vector< b2Vec2 > death_point;
+	death_point.push_back(b2Vec2(1100,-90+HEIGHT/3));
+	//death_point.push_back(b2Vec2( , ));
 	
 	centerx = WIDTH/7; centery = 20;
 	dx=WIDTH-70; dy=-40+5*HEIGHT/6; 
@@ -258,10 +259,10 @@ void init_level1(int &dx, int &dy)
 		GameMap.push_back( make_pair(goods , false) );
 		goods.clear();
 		
-		goods.push_back( b2Vec2(400,5*HEIGHT/6) );
-		goods.push_back( b2Vec2(400,-10+5*HEIGHT/6) );
-		goods.push_back( b2Vec2(600,-10+5*HEIGHT/6) );
-		goods.push_back( b2Vec2(600,5*HEIGHT/6) );
+		goods.push_back( b2Vec2(410,5*HEIGHT/6) );
+		goods.push_back( b2Vec2(410,-10+5*HEIGHT/6) );
+		goods.push_back( b2Vec2(800,-10+5*HEIGHT/6) );
+		goods.push_back( b2Vec2(800,5*HEIGHT/6) );
 		GameMap.push_back( make_pair(goods , false) );
 		goods.clear();
 		
@@ -274,9 +275,13 @@ void init_level1(int &dx, int &dy)
 		
 		///////////////////////////
 		
-		field.push_back(make_pair(b2Vec2(500,+20+HEIGHT/3) , 1.0));
+		field.push_back(make_pair(b2Vec2(500,20) , -3000.0));
+		field.push_back(make_pair(b2Vec2(330,-100 + 5*HEIGHT/6 ) , 3900.0));
 		
-		sb.create(GameMap , field, 1.0);
+		field.push_back(make_pair(b2Vec2(900,-200 + 5*HEIGHT/6 ) , 3000.0));
+		field.push_back(make_pair(b2Vec2(900,+70 + 5*HEIGHT/6 ) , -3000.0));
+		
+		sb.create(GameMap , field, death_point , 1.5);
 	}
 	sb.set_goal(dx,dy);
 
@@ -341,11 +346,18 @@ bool level(int levelid)
 		}
 
 		display(dx,dy);
-		if(sb.simulateNextStep())
+		int res = sb.simulateNextStep();
+		if(res == 1)
 		{
 			sb.destroy();
 			running = false;
 			return true;
+		}
+		else if(res == -1)
+		{
+			sb.destroy();
+			running = false;
+			return false;
 		}
 		SDL_GL_SwapBuffers();
 		if(1000.0/60>SDL_GetTicks()-start)
@@ -367,10 +379,6 @@ void init()
 
 int main(int argc,char** argv)
 {
-	color[0] = 0.7;
-	color[1] = 0.1;
-	color[2] = 0.7;
-	now_time = time(0);
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_SetVideoMode(WIDTH,HEIGHT,32,SDL_OPENGL);
 	
@@ -378,8 +386,10 @@ int main(int argc,char** argv)
 	srand(2);
 	
 	for(int i = 1; i < MAXLEVEL; )
+	{
 		if(level(i))
 			++i;
+	}
 	
 	SDL_Quit();
 	return 0;
