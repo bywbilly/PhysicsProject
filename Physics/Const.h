@@ -1,6 +1,6 @@
 #ifndef _CONST
 #define _CONST
-
+#include <vector>
 const int WIDTH=1280;
 const int HEIGHT=720;
 const float M2P=20;
